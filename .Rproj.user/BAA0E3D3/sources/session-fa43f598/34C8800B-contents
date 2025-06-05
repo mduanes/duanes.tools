@@ -1,4 +1,9 @@
+#' #' @name graph
+#'
 #' @export
+#'
+#'
+#'
 library(ggplot2)
 library(dplyr)
 

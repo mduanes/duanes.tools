@@ -1,4 +1,10 @@
+#' @name choropleth
 #' @export
+
+
+
+
+
 library(ggplot2)
 library(dplyr)
 library(tigris)

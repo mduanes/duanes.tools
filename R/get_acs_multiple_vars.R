@@ -1,4 +1,9 @@
+#' @name get_acs_multiple_vars
+#'
 #' @export
+#'
+#'
+#'
 library(ggplot2)
 library(dplyr)
 library(tidycensus)

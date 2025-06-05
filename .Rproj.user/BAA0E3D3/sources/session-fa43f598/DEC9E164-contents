@@ -1,3 +1,4 @@
+#' @name join_geometries
 #' @export
 #'
 #'
