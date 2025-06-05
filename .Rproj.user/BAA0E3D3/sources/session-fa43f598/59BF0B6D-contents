@@ -2,10 +2,10 @@ Package: duanes.tools
 Type: Package
 Title: Internal Use Tools for CVIOG ADP
 Version: 0.1.0
-Author: person("Micah", "Duane Shannon", email = "mds64585@uga.edu",
+Author@R: person("Micah", "Duane Shannon", email = "mds64585@uga.edu",
   role = c("aut", "cre"))
-Maintainer: person("Micah", "Duane Shannon", email = "mds64585@uga.edu",
-  role = c("aut", "cre"))
+Auhtor: Micah Duane Shannon [aut, cre]
+Maintainer: Micah Duane Shannon <mds645853@uga.edu>
 Description: Internal data visualization and manipulation tools for demographic analysis and mapping.
 License: Free Use
 Encoding: UTF-8
