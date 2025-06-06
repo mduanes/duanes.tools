@@ -55,7 +55,9 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
     geometry <- counties(state=st) %>%
       select(NAME)
     # change to match source data
-    if(str_detect(names[1]," County")) {
+    if(names[1] %in% unique(geometry$NAME)) {
+      geometry <- geometry
+    } else if (str_detect(names[1]," County")) {
       geometry <- geometry %>%
         mutate(NAME=paste0(NAME, " County"))
     } else if (str_detect(names[1],paste0(" County, ", state_name))) {
