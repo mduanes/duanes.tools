@@ -57,10 +57,10 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
     # change to match source data
     if(str_detect(names[1]," County")) {
       geometry <- geometry %>%
-        mutate(NAME=paste0(Name, " County"))
-    } else if (str_detect(names[1]," County, ", state_name)) {
+        mutate(NAME=paste0(NAME, " County"))
+    } else if (str_detect(names[1],paste0(" County, ", state_name))) {
       geometry <- geometry %>%
-        mutate(NAME=paste0(Name, " County, Georgia"))
+        mutate(NAME=paste0(NAME, " County, ", state_name))
     } else {
       print("Unrecognized Name Format. Recognized formats: NAME; NAME County; NAME County, STATE")
     }
