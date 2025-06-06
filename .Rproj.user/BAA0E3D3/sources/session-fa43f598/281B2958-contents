@@ -1,0 +1,1865 @@
+---
+title: "Hart County Data Packet"
+subtitle: "April 2025"
+date: paste(lubridate::month(Sys.Date(),label=TRUE,abbr=FALSE), lubridate::year(Sys.Date()))
+output: 
+  powerpoint_presentation:
+    reference_doc: B. Documents/B.2.template_wide_ugacolorway.pptx
+number_sections: true
+font-size: 0.6
+slide_level: 2
+knit: (function(inputFile, encoding) {
+  rmarkdown::render(inputFile, encoding = encoding, output_dir = "A. Data Packets/Hart/") })
+---
+
+## Roadmap
+1. County and Region 
+2. People and Demographics
+3. Education
+4. County Economy
+5. Regional Economy
+
+```{r, setup, include = FALSE}
+
+source("A. Data Packets/Hart/settings_hart.R")
+
+source("C. scripts/functions.R")
+
+# SOURCES ----
+# source statements attached to figures
+
+source_acs <- paste0("Source: American Community Survey (5-Year), ",y_acs-4,"-",y_acs)
+source_estimates <- "Source: Vintage 2023 Census Population Estimates"
+source_decennial <- paste0("Source: US Census Bureau, ", round_any(year,10,f=floor), " Redistricting File")
+source_fred <- "Source: US Bureau of Labor Statistics (via Federal Reserve Economic Data)"
+source_lodes <- "Source: US Census Bureau,\nLongitudinal Employer-Household Dynamics\nOrigin-Destination; All Workers"
+source_gosa <- "Source: Georgia Governor's\nOffice of Student Achievement"
+source_lightcast <- "Source: US Bureau of Labor Statistics; Lightcast"
+source_ipeds <- "Source: Integrated Postsecondary Education Data System (IPEDS)"
+```
+
+```{r pulling data, include = FALSE}
+source("C. scripts/data_pulls.R")
+
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+# remember to update the county name in the header!
+
+knitr::opts_chunk$set(dpi = 1500,
+                      echo = FALSE, 
+                      message=FALSE, 
+                      warning=FALSE)
+
+cty_highlight <- cty_map %>%
+  filter(str_detect(NAME,ctys_string)) %>%
+  st_union()
+```
+
+
+```{r template, results='hide', dev.args=list(bg="transparent"),  fig.width=10,fig.height=8}
+# empty code block, copy and paste and create figures within
+```
+
+
+
+
+---
+
+# County and Region
+
+---
+
+## `r ctys` County and Region
+
+:::::::::::::: {.columns}
+ 
+::: {.column}
+```{r slide 4 region map, results='hide', dev.args=list(bg="transparent"),  fig.width=10,fig.height=8}
+# special county dimensions for out of state
+if (out_of_state_fips[1] == "none") {
+cty_dimensions_all %>%
+  mutate("is_region"=case_when(County %in% ctys~"County",
+                               County %in% ctys_region~"Region",
+                               TRUE~"Not Region")) %>%
+  join_geometries() %>%
+  choropleth(col="is_region",pal=c("#004E60",pal_binary),
+             caption="Region as defined by the Carl Vinson Institute of Government")
+} else {
+cty_dimensions_special <- cty_dimensions_all[1,] %>%
+  mutate(County = out_of_state_name,
+         CountyFipsLong = out_of_state_fips,
+         GEOID=out_of_state_fips,
+         is_region="Region") 
+oos <- mds_counties(state=out_of_state_state) %>%
+  select(GEOID)
+cty_dimensions_special <- cty_dimensions_special %>%
+  left_join(oos) %>%
+  st_as_sf()
+
+cty_dimensions_all %>%
+  mutate("is_region"=case_when(County %in% ctys~"County",
+                               County %in% ctys_region~"Region",
+                               TRUE~"Not Region")) %>%
+  join_geometries() %>%
+  rbind(cty_dimensions_special) %>%
+  choropleth(col="is_region",pal=c("#004E60",pal_binary),
+             caption="Region as defined by the Carl Vinson Institute of Government") +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+}
+
+```
+:::
+
+::: {.column}
+```{r slide 5 county in region map, dev.args=list(bg="transparent"),  fig.width=10,fig.height=8}
+if (out_of_state_fips[1] == "none") {
+cty_dimensions_region %>%
+  mutate("is_region"=case_when(NAME %in% ctys~"County",
+                               NAME %in% ctys_region~"Region",
+                               TRUE~"Not Region")) %>%
+  #join_geometries() %>%
+  mutate("lab_col"=case_when(NAME %in% ctys~"white",
+                               NAME %in% ctys_region~"black",
+                               TRUE~"black")) %>%
+  choropleth(col="is_region",pal=c("#004E60",pal_binary[2]),
+             caption="Region as defined by the Carl Vinson Institute of Government") +
+  geom_sf_text(aes(label=NAME,color=lab_col),size=default_axis_text_size/5,
+               fontface="bold") +
+  labs(x="",y="") + 
+  scale_color_manual(values=c("black","white")) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+} else {
+  cty_dimensions_region %>%
+  mutate("is_region"=case_when(NAME %in% ctys~"County",
+                               TRUE~"Region")) %>%
+  #join_geometries() %>%
+  #rbind(cty_dimensions_special) %>%
+  mutate("lab_col"=case_when(NAME %in% ctys~"white",
+                               NAME %in% ctys_region~"black",
+                               TRUE~"black")) %>%
+  choropleth(col="is_region",pal=c("#004E60",pal_binary[2]),
+             caption="Region as defined by the Carl Vinson Institute of Government") +
+  geom_sf_text(aes(label=NAME,color=lab_col),size=default_axis_text_size/5,
+               fontface="bold") +
+  labs(x="",y="") + 
+  scale_color_manual(values=c("black","white")) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+}
+```
+:::
+::::::::::::::
+
+::: {.notes}
+TEST NOTES HERE 
+
+TEST NOTES ALSO HERE
+
+`r 35 - 20` is a test number
+
+:::
+
+---
+
+# People and Demographics
+
+---
+
+## Regional Percent Change in Population, 2013-2023
+:::::::::::::: {.columns}
+ 
+::: {.column}
+```{r slide 7 population change,fig.width=10,fig.height=8, dev.args=list(bg="transparent"), }
+regional_pct <- df_pop_base %>%
+  group_by(COUNTY,YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  filter(COUNTY %in% ctys_region) %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2013-2023"=round(100*((`2023`-`2013`)/`2013`),1),
+         "Change 2013-2023" = (`2023`-`2013`))
+
+# breaks <- getJenksBreaks(regional_pct$`% Change 2013-2023`,6)
+
+ regional_pct %>%
+#   mutate("class"=base::cut(dig.lab=10,`% Change 2013-2023`,unique(breaks),include.lowest=TRUE)) %>%
+#   mutate(class=str_remove_all(class,"\\["),
+#          class=str_remove_all(class,"\\]"),
+#          class=str_remove_all(class,"\\("),
+#          class=str_replace(class,"\\,","% \\- "),
+#          class=paste0(class,"%")) %>%
+#   mutate(class=as.factor(class)) %>%
+#   mutate(class=reorder(class,`% Change 2013-2023`)) %>%
+  rename("NAME"=COUNTY) %>%
+  left_join(cty_map) %>%
+  st_as_sf() %>%
+  choropleth(col="% Change 2013-2023",show_legend=TRUE,pal = default_pal_2way,type="gradient",
+             caption=source_estimates,legend_lab="Historical\nPercent Change\n2013-2023",legend_pct=TRUE) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+```
+:::
+
+::: {.column}
+```{r slide 7 table, fig.width=10,fig.height=8, dev.args=list(bg="transparent") }
+total <- df_pop_base %>%
+  filter(COUNTY %in% ctys_region) %>%
+  group_by(YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2013-2023"=paste0(round(100*((`2023`-`2013`)/`2013`),1),"%"),
+         "Change 2013-2023" = (`2023`-`2013`),
+         "County"="Region") %>%
+  select(County,`2013`,`2023`,`Change 2013-2023`,`% Change 2013-2023`) %>%
+  mutate_all(~format(.x,big.mark=",")) %>%
+  mutate_all(~paste0("**",.x,"**"))
+
+df_pop_base %>%
+  group_by(COUNTY,YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  filter(COUNTY %in% ctys_region) %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2013-2023"=paste0(round(100*((`2023`-`2013`)/`2013`),1),"%"),
+         "Change 2013-2023" = round(`2023`-`2013`,1)) %>%
+  rename("County"=COUNTY) %>%
+  select(County,`2013`,`2023`,`Change 2013-2023`,`% Change 2013-2023`) %>%
+  mutate_all(~format(.x,big.mark=",")) %>%
+  rbind(total) %>%
+  kable(format.args=list(big.mark=","),align=c("l","r","r","r","r"))
+```
+:::
+::::::::::::::
+
+---
+
+## Projected Regional Percent Change in Population, 2024-2040
+:::::::::::::: {.columns}
+
+::: {.column}
+```{r slide XX population change heatmap longterm,  fig.width=10,fig.height=8, results='hide', dev.args=list(bg="transparent"), }
+regional_pct <- df_projections %>%
+  group_by(COUNTY,YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  filter(COUNTY %in% ctys_region) %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2013-2023"=round(100*((`2040`-`2024`)/`2024`),1),
+         "Change 2024-2050"=`2040`-`2024`)
+
+# breaks <- getJenksBreaks(regional_pct$`% Change 2013-2023`,6)
+
+regional_pct %>%
+  # mutate("class"=base::cut(dig.lab=10,`% Change 2013-2023`,unique(breaks),include.lowest=TRUE)) %>%
+  # mutate(class=str_remove_all(class,"\\["),
+  #        class=str_remove_all(class,"\\]"),
+  #        class=str_remove_all(class,"\\("),
+  #        class=str_replace(class,"\\,","% \\- "),
+  #        class=paste0(class,"%")) %>%
+  # mutate(class=as.factor(class)) %>%
+  # mutate(class=reorder(class,`% Change 2013-2023`)) %>%
+  rename("NAME"=COUNTY) %>%
+  left_join(cty_map) %>%
+  st_as_sf() %>%
+  choropleth(col="% Change 2013-2023",show_legend=TRUE,pal = default_pal_2way,
+             caption="Source: Governor's Office of Planning and Budget,\n2024 Series Population Projections",legend_lab="Projected\nPercent Change\n2024-2040",type="gradient",legend_pct = TRUE) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+```
+:::
+
+::: {.column}
+```{r longterm table,  fig.width=10,fig.height=8, dev.args=list(bg="transparent"), }
+total <- df_projections %>%
+  filter(COUNTY %in% ctys_region) %>%
+  group_by(YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2024-2040"=paste0(round(100*((`2040`-`2024`)/`2024`),1),"%"),
+         "Change 2024-2040"=`2040`-`2024`,
+         "County"="Region") %>%
+  select(County,`2024`,`2040`,`Change 2024-2040`,`% Change 2024-2040`) %>%
+    mutate_all(~format(.x,big.mark=",")) %>%
+  mutate_all(~paste0("**",.x,"**"))
+
+df_projections %>%
+  group_by(COUNTY,YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  filter(COUNTY %in% ctys_region) %>%
+  pivot_wider(names_from=YEAR,values_from=POP) %>% 
+  mutate("% Change 2024-2040"=paste0(round(100*((`2040`-`2024`)/`2024`),1),"%"),
+         "Change 2024-2040"=`2040`-`2024`) %>%
+  rename("County"=COUNTY) %>%
+  select(County,`2024`,`2040`,`Change 2024-2040`,`% Change 2024-2040`) %>%
+    mutate_all(~format(.x,big.mark=",")) %>%
+  rbind(total)  %>%
+  kable(format.args=list(big.mark=","),align=c("l","r","r","r","r"))
+```
+:::
+::::::::::::::
+
+---
+
+
+
+<!-- ## Population Change Since 2010 in `r ctys` County -->
+
+<!-- :::::::::::::: {.columns} -->
+<!-- ::: {.column} -->
+<!-- ```{r slide 8 lhs population change line graph,  fig.width=8,fig.height=6,echo = FALSE, results='hide', message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), } -->
+<!-- df_pop_base %>%  -->
+<!--   mutate(YEAR=as.numeric(YEAR)) %>% -->
+<!--   filter(YEAR>=2010,COUNTY %in% ctys) %>% -->
+<!--   group_by(COUNTY,YEAR) %>% -->
+<!--   summarize(POP=sum(POP)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(label=format(POP,big.mark=",")) %>% -->
+<!--   graph(graph_type="line","YEAR","POP","COUNTY",show_legend = FALSE, -->
+<!--         x_lab="",y_lab="Population",commas_y=TRUE,legend_lab="County", -->
+<!--         caption=paste0(source_estimates,", adjusted by\nthe Carl Vinson Institute of Government")) + -->
+<!--   scale_y_continuous(labels=scales::comma, -->
+<!--                      limits=c(0.8*min(df_pop_base$POP),1.2*max(df_pop_base$POP))) + -->
+<!--   scale_x_continuous(breaks=c(2010, 2014, 2018, 2020, 2022)) + -->
+<!--   #geom_text_repel(mapping=aes(label=label),color="black",size=default_axis_text_size/10) + -->
+<!--   geom_vline(xintercept=2010,linetype="dashed",color="#9EA2A2") + -->
+<!--   geom_vline(xintercept=2020,linetype="dashed",color="#9EA2A2") -->
+<!-- ``` -->
+<!-- ::: -->
+
+<!-- ::: {.column} -->
+<!-- ```{r,  fig.width=8,fig.height=6,echo = FALSE, message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), } -->
+<!-- df_pop_base %>%  -->
+<!--   filter(COUNTY %in% ctys & YEAR >= 2010) %>% -->
+<!--   group_by(YEAR,COUNTY) %>% -->
+<!--   summarize(POP=sum(POP)) %>% -->
+<!--   ungroup() %>% -->
+<!--     select(YEAR,POP) %>% -->
+<!--     rename("year"=YEAR,"value"=POP) %>% -->
+<!--     arrange(year) %>% -->
+<!--     rename("Year"=year, -->
+<!--            "Population"=value) %>% -->
+<!--     mutate(Year=as.character(Year)) %>% -->
+<!--     mutate(Year = case_when(Year %in% c("2010","2020","2023")~paste0("**",Year,"**"), -->
+<!--                             TRUE~Year), -->
+<!--            Population = case_when(Year %in% c("**2010**","**2020**")~paste0("**",format(Population,big.mark=","),"**"), -->
+<!--                             TRUE~format(Population,big.mark=","))) %>% -->
+<!--     mutate(Population=str_remove_all(Population," ")) %>% -->
+<!--     kable(format.args = list(big.mark=",")) -->
+<!-- ``` -->
+<!-- ::: -->
+<!-- :::::::::::::: -->
+
+
+
+
+---
+
+## `r ctys` County Long-Term Population Trend
+
+```{r slide XX long term trend,  fig.width=14,fig.height=8, results='hide', dev.args=list(bg="transparent"), dev='svg'}
+
+df_base_trunc <- df_pop_base %>%
+  select(colnames(df_projections))
+
+df_longterm <- df_projections %>%
+  rbind(df_base_trunc) %>%
+  filter(COUNTY %in% ctys) %>%
+  group_by(YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() 
+
+df_longterm %>%
+  filter(YEAR %in% c(2000,2010,2020,2030,2040,2050)) %>%
+  mutate(POP_LABEL = format(POP,big.mark=",")) %>%
+  group_by(YEAR) %>%
+  mutate("total"=sum(POP)) %>%
+  ungroup() %>%
+  mutate("pct"=paste0(round(100*(POP/total),1),"%")) %>%
+  graph(graph_type="bar",x="YEAR",y="POP",y_lab="Population",x_lab="",show_legend = FALSE,legend_lab="Age Group",commas_y=TRUE,label="POP_LABEL",
+        caption = "Sources: 2010-2020: Vintage 2023 Census Population Estimates;\n2030-2060: Governor's Office of Planning and Budget, 2024 Series Population Projections",disable_y=TRUE) +
+  scale_x_continuous(breaks= c(2000,2010, 2020, 2030, 2040, 2050))
+
+```
+
+---
+
+## `r ctys` County Age Trend
+
+```{r slide 10 county age trend bar, fig.width=14, fig.height=8, results='hide', dev='svg', dev.args=list(bg="transparent")}
+
+df_base_trunc <- df_pop_base %>%
+  filter(COUNTY %in% ctys, YEAR %in% c(2010, 2020)) %>%
+  select(colnames(df_projections))
+
+df_projections %>%
+  rbind(df_base_trunc) %>%
+  filter(COUNTY %in% ctys, YEAR %in% c(2010, 2020, 2030, 2040)) %>%
+  mutate(AGE_GROUP = case_when(AGE %in% c("00-04", "05-09", "10-14", "15-19", "20-24")~"0-24",
+                               AGE %in% c("25-29", "30-34", "35-39", "40-44", 
+                                          "45-49", "50-54", "55-59", "60-64") ~ "25-64",
+                               TRUE ~ "65+")) %>%
+  mutate(AGE_GROUP=factor(AGE_GROUP,levels=c("65+","25-64","0-24"))) %>%
+  group_by(AGE_GROUP,YEAR) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  mutate(POP_LABEL = format(POP,big.mark=",")) %>%
+  group_by(YEAR) %>%
+  mutate("total"=sum(POP)) %>%
+  ungroup() %>%
+  mutate("pct"=paste0(round(100*(POP/total),1),"%")) %>%
+  graph(graph_type="bar",x="YEAR",y="POP",y_lab="Population",x_lab="",group="AGE_GROUP",show_legend = TRUE,legend_lab="Age Group",label="POP_LABEL",commas_y=TRUE,
+        caption = "Sources: 2010-2020: Vintage 2023 Census Population Estimates;\n2030-2060: Governor's Office of Planning and Budget, 2024 Series Population Projections",disable_y = TRUE) +
+  scale_x_continuous(breaks= c(2010, 2020, 2030, 2040))
+
+```
+
+---
+
+## Racial and Ethnic Demographics in `r ctys` County
+
+:::::::::::::: {.columns}
+```{r slide 11 racial demgographics prep,  fig.width=8,fig.height=6, dev='svg', dev.args=list(bg="transparent") }
+df_decennial_race_cty_tbl <- df_decennial_race_cty %>% 
+    mutate("other"=(total-white-black-hispanic)+asian) %>%
+    summarize(total=sum(total),
+              white=sum(white),
+              black=sum(black),
+              hispanic=sum(hispanic),
+              other=sum(other)) %>%
+    pivot_longer(c(2:5),values_to="count",names_to="race") %>%
+    mutate(pct=100*(count/total)) %>%
+    mutate("pct"=paste0(round(pct,1),"%"),
+           race=str_to_title(race))
+```
+::: {.column}
+`r ctys` County is predominantly **`r df_decennial_race_cty_tbl %>% filter(pct==max(pct)) %>% pull(race)`** (`r df_decennial_race_cty_tbl %>% filter(pct==max(pct)) %>% pull(pct)`).
+:::
+
+::: {.column}
+```{r slide 11 racial demgographics stacked bar,  fig.width=8,fig.height=6, dev='svg', dev.args=list(bg="transparent"), }
+df_decennial_race_cty_tbl %>%
+  select(-total) %>%
+    kable(format.args=list(big.mark=","),align=c("l","r","r","r","r"),
+          col.names = c("Race","Number of People","Percent of Total"))
+```
+:::
+::::::::::::::
+
+---
+
+
+## `r ctys` County Age/Race Breakdown, 2023
+
+```{r slide 9 five year age race breakdown,  fig.width=10,fig.height=8,results='hide', dev='svg', dev.args=list(bg="transparent"), }
+
+df_pop_base %>%
+  filter(COUNTY %in% ctys, YEAR==2023)  %>%
+  mutate(AGE = case_when(AGE %in% c("00-04", "05-09", "10-14", "15-19", "20-24")~"0-24",
+                               AGE %in% c("25-29", "30-34", "35-39", "40-44", 
+                                          "45-49", "50-54", "55-59", "60-64") ~ "25-64",
+                               TRUE ~ "65+")) %>%
+  group_by(AGE,RACE_ETH) %>%
+  summarize(POP=sum(POP)) %>%
+  ungroup() %>%
+  group_by(AGE) %>%
+  mutate("total"=sum(POP)) %>%
+  ungroup() %>%
+  mutate(pct=100*(POP/total)) %>%
+  mutate(label=case_when(pct>=10~paste0(format(round(POP,0),big.mark=",")),
+                                        TRUE~""),
+         RACE_ETH=factor(RACE_ETH)) %>%
+  mutate(RACE_ETH=reorder(RACE_ETH,pct)) %>%
+  graph(graph_type="bar",x="AGE",y="POP",y_lab="Population",x_lab="Age Group",group="RACE_ETH",show_legend = TRUE,legend_lab="Race",commas_y=TRUE,
+        caption = source_estimates,label="label",disable_y = TRUE)
+
+```
+
+---
+
+
+
+<!-- ## Parents with children under 6 by labor force status -->
+
+<!-- ```{r,  fig.width=10,fig.height=8,echo = FALSE, results='hide', message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), } -->
+<!-- df_B23008 <- df_acs_extra_vars_cty %>% -->
+<!--   filter(str_detect(variable,"B23008")) %>% -->
+<!--   mutate("Family_status"=case_when(str_detect(var_name,"!!Living with one parent:!!Living with father:")~"Single parent (father)", -->
+<!--                                    str_detect(var_name,"!!Living with one parent:!!Living with mother:")~"Single parent (mother)", -->
+<!--                                    str_detect(var_name,"Living with two parents:")~"Two parents"), -->
+<!--          "LF_status"=case_when(str_detect(var_name,"Both parents in labor force")  | str_detect(var_name,"Living with one parent:!!Living with mother:!!In labor force") | str_detect(var_name,"Living with one parent:!!Living with father:!!In labor force") ~"All parents in labor force", -->
+<!--                                str_detect(var_name,"Father only in labor force") | str_detect(var_name,"Mother only in labor force") ~ "One parent in labor force", -->
+<!--                                TRUE~"No parents in labor force"), -->
+<!--          "Total"=case_when(variable %in% c("B23008_001","B23008_002","B23008_003", -->
+<!--                                            "B23008_008","B23008_012","B23008_009") ~ "Total", -->
+<!--                            TRUE~"Not total")) %>%  -->
+<!--   mutate("Total_ct"=case_when(Total == "Total"~estimate, -->
+<!--                               TRUE~NA)) %>% -->
+<!--   group_by(Family_status) %>% -->
+<!--   fill(Total_ct) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate("pct"=100*(estimate/Total_ct),4, -->
+<!--          label=case_when(pct >= 10 ~ paste0(round(pct,1),"%"), -->
+<!--                          TRUE ~ "" ))  -->
+
+<!-- df_B23008_sf <- df_B23008 %>% -->
+<!--   filter(Family_status == "Single parent (father)") -->
+
+<!-- if (sum(df_B23008_sf$estimate) == 0) { -->
+<!--   statement <- "Note: there were no observations of single parent\nhouseholds where the single parent was a father." -->
+<!-- } else { -->
+<!--   statement <- "" -->
+<!-- } -->
+
+<!-- ``` -->
+
+<!-- ```{r slide 12 parents with young kids stacked bar,  fig.width=10,fig.height=8,echo = FALSE, results='hide', message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), } -->
+<!-- df_B23008 %>% -->
+<!--   filter(Total != "Total",estimate != 0) %>% -->
+<!--   mutate("Family_status"=factor(Family_status,levels=rev(c("Single parent (father)", -->
+<!--                                                        "Single parent (mother)", -->
+<!--                                                        "Two parents")))) %>%  -->
+<!--   mutate(label=case_when(pct>10~paste0(estimate, " (",label,")"), -->
+<!--                          TRUE~"")) %>% -->
+<!--   graph(graph_type = "bar","Family_status","estimate",group="LF_status",show_legend = TRUE, -->
+<!--         label="label",y_lab="",x_lab="",commas_y = TRUE,legend_lab = "Labor Force Status", caption=paste0(statement,"\n",source_acs))+ -->
+<!--   theme(axis.text.x = element_text(angle=0)) -->
+<!-- ``` -->
+
+## Number of Individuals in Civilian Labor Force, Monthly
+
+```{r slide 14 civilian labor force month line, fig.width=14, fig.height=8, results='hide', dev='svg', dev.args=list(bg="transparent") }
+if (length(ctys) == 1) {
+df_fred_labor_force %>% 
+  mutate(date=as_date(date),
+         label=case_when(date %in% c("2020-02-01","2020-04-01",paste0(max(date)))~format(value,big.mark=","),
+                          TRUE~"")) %>%
+  graph(graph_type="line","date","value","series_id",show_legend = FALSE,
+        x_lab="",y_lab="",commas_y=TRUE, point_size = default_point_size*1.25,
+        caption=source_fred) +
+  scale_x_date(date_breaks = "6 months",
+               date_labels = "%b %Y",
+               expand = expansion(mult = 0.1),
+               limits = c(min(df_fred_labor_force$date),max(df_fred_labor_force$date))) +
+  scale_y_continuous(limits=c(0.9*min(df_fred_labor_force$value),
+                              1.1*max(df_fred_labor_force$value)), labels = scales::comma) +
+  theme(axis.text.x = element_text(angle=90)) +
+  geom_text_repel(aes(label=label),color="black",size=6,#fill="#9EA2A250",
+                   fontface="bold",
+                  arrow = arrow(type="closed",length=unit(0,"cm")),
+                   nudge_y=0.2*mean(df_fred_unemployment$value),
+                   nudge_x = -100)
+} else {
+  print("Omitted")
+}
+```
+
+---
+
+## Monthly Unemployment Rate for `r ctys` County
+
+```{r slide 15 monthly unemployment line, fig.width=14, fig.height=8, results='hide', dev='svg', dev.args=list(bg="transparent") }
+if (length(ctys) == 1) {
+df_fred_unemployment %>% 
+  mutate(date=as_date(date),
+         label=case_when(date %in% c("2020-02-01","2020-04-01",paste0(max(date)))~paste0(value,"%"),
+                          TRUE~"")) %>%
+  graph(graph_type="line","date","value","series_id",show_legend = FALSE,x_lab="",y_lab="",pct_y=TRUE,caption=source_fred,point_size = default_point_size*1.25) +
+  scale_y_continuous(limits=c(0,1.25*max(df_fred_unemployment$value)),
+                     labels = percent_marker) +
+  scale_x_date(date_breaks = "6 months",
+               date_labels = "%b %Y",
+               expand = expansion(mult = 0.1),
+               limits = c(min(df_fred_labor_force$date),max(df_fred_labor_force$date))) +
+  theme(axis.text.x = element_text(angle=90)) +
+  geom_text_repel(aes(label=label),color="black",size=6,#fill="#9EA2A250",
+                   fontface="bold",
+                  arrow = arrow(type="closed",length=unit(0,"cm")),
+                   nudge_y=0.2*mean(df_fred_unemployment$value),
+                   nudge_x = -50)
+} else {
+  print("Omitted")
+}
+```
+
+---
+
+## Where People Living in `r ctys` County Work, 2021
+
+:::::::::::::: {.columns}
+::: {.column}
+```{r slide 16 lhs place of work heatmap, fig.width=8, fig.height=6, results='hide', dev.args=list(bg="transparent") }
+
+if (length(ctys) == 1) {
+map_r <- df_lodes %>%
+  filter(home_county %in% ctys_fips) %>%
+  mutate("rank"=dense_rank(-value)) %>%
+  filter(rank <= 10 | work_county %in% region_fips) %>%
+  mutate("GEOID"= as.character(work_county))
+
+# calculate shared gradient for LODES
+lodes_midpoint <- median(map_r$value)
+lodes_max <- max(map_r$value) + 0.2*sd(map_r$value)
+lodes_min <- 0
+
+#breaks <- getJenksBreaks(map_r$value,6)
+
+# map_r <- map_r %>%
+#   mutate("class"=base::cut(dig.lab=10,value,unique(breaks),include.lowest=TRUE)) %>%
+#   mutate(class=str_remove_all(class,"\\["),
+#          class=str_remove_all(class,"\\]"),
+#          class=str_remove_all(class,"\\("),
+#          class=str_replace(class,"\\,"," \\- "),
+#          GEOID=as.character(GEOID)) %>%
+#   mutate(class=as.factor(class)) %>%
+#   mutate(class=reorder(class,value))
+
+cty_map_full %>%
+  filter(GEOID %in% unique(map_r$GEOID)) %>%
+  left_join(map_r) %>% 
+  # mutate(class=case_when(is.na(class)~"No Data",
+  #                        TRUE~class))  %>%
+  # mutate(class=reorder(class,value)) %>%
+  choropleth(col="value",show_legend = TRUE,legend_lab = "Number of People",caption=source_lodes,pal=c(default_pal_1way[1:4],"white"),type="gradient") +
+        scale_fill_gradient2(high=default_pal_1way[5],
+                             mid=default_pal_1way[3],
+                             low=default_pal_1way[2],
+                             name="Number of People",
+                             midpoint=log(lodes_midpoint),
+                             labels=scales::comma,
+                             limits=c(lodes_min,lodes_max),
+                              breaks=c(lodes_midpoint,
+                                       lodes_max)) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+} else {
+  print("Omitted")
+}
+```
+:::
+
+::: {.column}
+```{r primary jobs table, fig.width=8, fig.height=6, dev.args=list(bg="transparent") }
+
+if (length(ctys) == 1) {
+total <- df_lodes %>%
+  filter(home_county_name==ctys) %>% 
+  select(work_county_name,value) %>%
+  mutate("work_county_name"="**Total primary jobs**") %>%
+  group_by(work_county_name) %>%
+  summarize(value=sum(value)) %>%
+  mutate(share="",rank=1000000000000,
+         value=paste0("**",format(floor(value),big.mark=","),"**"))
+
+df_lodes %>%
+  filter(home_county_name==ctys) %>% 
+  select(work_county_name,value) %>%
+  mutate("rank"=dense_rank(-value)) %>%
+  mutate(work_county_name=case_when(rank > 10~"All Other Locations in Georgia",
+                                    TRUE~work_county_name)) %>%
+  group_by(work_county_name) %>%
+  summarise(value=sum(value),rank=sum(rank)) %>%
+  ungroup() %>%
+  mutate(total=sum(value),
+         "share"=paste0(round(100*(value/total),1),"%"),
+         value=format(value,big.mark=",")) %>%
+  select(-total) %>%
+  rbind(total) %>%
+  arrange(rank) %>%
+  select(-rank) %>%
+  kable(format.args = list(big.mark=","),col.names = c("County","People","Share"),
+        align=c("l","r","r","r","r"))
+} else {
+  print("Omitted")
+}
+```
+:::
+::::::::::::::
+
+---
+
+## Where People Working in `r ctys` County Live, 2021
+:::::::::::::: {.columns}
+::: {.column}
+```{r slide 17 lhs place of residence heatmap, fig.width=8, fig.height=6, results='hide', dev.args=list(bg="transparent") }
+
+if (length(ctys) == 1) {
+map_w <- df_lodes %>%
+  filter(work_county==ctys_fips) %>%
+  mutate("rank"=dense_rank(-value)) %>%
+  filter(rank <= 10 | home_county %in% region_fips) %>%
+  #filter(home_county %in% region_fips) %>%
+  mutate("GEOID"= as.character(home_county))
+
+# breaks <- getJenksBreaks(map_w$value,6)
+# 
+# map_w <- map_w %>%
+#   mutate("class"=base::cut(dig.lab=10,value,unique(breaks),include.lowest=TRUE)) %>%
+#   mutate(class=str_remove_all(class,"\\["),
+#          class=str_remove_all(class,"\\]"),
+#          class=str_remove_all(class,"\\("),
+#          class=str_replace(class,"\\,"," \\- "),
+#          GEOID=as.character(GEOID)) %>%
+#   mutate(class=as.factor(class)) %>%
+#   mutate(class=reorder(class,value))
+
+cty_map_full %>%
+  filter(GEOID %in% unique(map_w$GEOID)) %>%
+  mutate(GEOID=(GEOID)) %>%
+  left_join(map_w) %>%
+  # mutate(class=case_when(is.na(class)~"No Data",
+  #                        TRUE~class)) %>%
+  # mutate(class=reorder(class,value)) %>%
+  choropleth(col="value",show_legend = TRUE,legend_lab = "Number of People",caption=source_lodes,pal=c(default_pal_1way[1:4],"white"),type="gradient") +
+        scale_fill_gradient2(high=default_pal_1way[5],
+                             mid=default_pal_1way[3],
+                             low=default_pal_1way[2],
+                             name="Number of People",
+                             midpoint=log(lodes_midpoint),
+                             labels=scales::comma,
+                             limits=c(lodes_min,lodes_max),
+                              breaks=c(lodes_midpoint,
+                                       lodes_max)) +      geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000")
+} else {
+  print("Omitted")
+}
+```
+
+:::
+::: {.column}
+```{r county live table,  fig.width=8, fig.height=6, dev.args=list(bg="transparent"), }
+if (length(ctys) == 1) {
+total <- df_lodes %>%
+  filter(work_county_name==ctys) %>% 
+  select(home_county_name,value) %>%
+  mutate("home_county_name"="**Total primary jobs**") %>%
+  group_by(home_county_name) %>%
+  summarize(value=sum(value)) %>%
+  mutate(share="",rank=1000000000000,
+         value=paste0("**",format(floor(value),big.mark=","),"**"))
+
+df_lodes %>%
+  filter(work_county_name==ctys) %>% 
+  select(home_county_name,value) %>%
+  mutate("rank"=dense_rank(-value)) %>%
+  mutate(home_county_name=case_when(rank > 10~"All Other Locations in Georgia",
+                                    TRUE~home_county_name)) %>%
+  group_by(home_county_name) %>%
+  summarise(value=sum(value),rank=sum(rank)) %>%
+  ungroup() %>%
+  mutate(total=sum(value),
+         "share"=paste0(round(100*(value/total),1),"%"),
+         value=format(value,big.mark=",")) %>%
+  select(-total) %>%
+  rbind(total) %>%
+  arrange(rank) %>%
+  select(-rank) %>%
+  kable(format.args = list(big.mark=",",digits=2),col.names = c("County","People","Share"),
+        align=c("l","r","r","r","r"))
+} else {
+  print("Omitted")
+}
+```
+:::
+
+::::::::::::::
+
+---
+
+# Education
+
+---
+
+
+## Educational Attainment
+
+:::::::::::::: {.columns}
+ 
+::: {.column}
+**`r df_acs_basic_vars_cty %>% filter(str_detect(var_group,"Ed_") & !str_detect(description,"Total")) %>% filter(description != "Less than high school graduate") %>% group_by(NAME) %>% summarize(pct=round(sum(pct),1)) %>% pull(pct)`%** of `r ctys` County's population has a **high school diploma or higher**
+
+**`r df_acs_basic_vars_cty %>% filter(str_detect(var_group,"Ed_") & !str_detect(description,"Total")) %>% filter(description != "Less than high school graduate" & description != "High school diploma or GED" & description != "Some college or Associate's Degree") %>% group_by(NAME) %>% summarize(pct=round(sum(pct),1)) %>% pull(pct)`%** has a **bachelor's degree or higher**
+:::
+
+
+::: {.column}
+```{r slide 13 educational attainment stacked bar, fig.width=8, fig.height=6, results='hide', dev='svg', dev.args=list(bg="transparent") }
+
+df_acs_basic_vars_cty %>%
+  rbind(acs_st) %>%
+  filter(str_detect(var_group,"Ed_") & !str_detect(description,"Total")) %>%
+  mutate(description=case_when(description %in% c("MA degree",
+                                          "Doctoral degree",
+                                          "Professional degree")~"Graduate or Professional degree",
+                               TRUE~description)) %>%
+  mutate(description=factor(description,levels=rev(c("Less than high school graduate",
+                                          "High school diploma or GED",
+                                          "Some college or Associate's Degree",
+                                          "Bachelor's degree",
+                                          "Graduate or Professional degree")))) %>%
+  mutate("label"=case_when(pct>=5~paste0(round(pct,1),"%"),
+                           TRUE~"")) %>%
+  graph(graph_type="bar",y="pct",x="NAME","description",show_legend=TRUE,commas_y=TRUE,x_lab="",y_lab="",legend_lab="Highest Level of Education",label="label",caption=source_acs,axis_text_size = default_axis_text_size-5,disable_y = TRUE)
+```
+:::
+::::::::::::::
+
+---
+
+
+## 3rd grade Lexile Outcomes, `r unique(df_gosa_eog$LONG_SCHOOL_YEAR)`
+
+```{r slide 19 third grade english, fig.width=14, fig.height=8, dev='svg', dev.args=list(bg="transparent") }
+# df_gosa_eog_r <- df_gosa_eog %>%
+#   filter(ACDMC_LVL == 3 & SUBGROUP_NAME == "All Students" & TEST_CMPNT_TYP_NM == "English Language Arts" & INSTN_NUMBER == "ALL") %>%
+#     mutate("label"=case_when(pct>=10~paste0(pct,"%"),
+#                              TRUE~""),
+#            LONG_SCHOOL_YEAR=paste0(LONG_SCHOOL_YEAR," School Year"),
+#            pct=as.numeric(pct),
+#            level=factor(level,levels=rev(c("Beginning","Developing","Proficient","Distinguished")))) 
+# 
+# df_gosa_eog_r %>%
+#   graph(graph_type = "bar","SCHOOL_DSTRCT_NM","pct","level",y_lab = "",x_lab="",show_legend = TRUE,label="label",
+#         legend_lab = "Level of Achievement",
+#         caption=paste0("Note: ", format(unique(as.numeric(df_gosa_eog_r$NUM_TESTED_CNT[df_gosa_eog_r$SCHOOL_DSTRCT_NM!="All Schools"])),big.mark=","), " Total Students Tested\n",source_gosa),
+#         pct_y=TRUE,disable_y = TRUE)
+
+state_avg <- df_gosa_lexile %>% 
+  filter(!is.na(BELOW_GL_PCT)) %>% 
+  mutate(across(ends_with("GL_PCT"), ~ . / 100)) %>% 
+  rowwise() %>% 
+  mutate(NUM_BELOW = NUM_TEST * BELOW_GL_PCT,
+         NUM_ABOVE = NUM_TEST * ABOVE_GL_PCT) %>% 
+  ungroup() %>% 
+  summarize(NUM_TEST_S = sum(NUM_TEST),
+            BELOW_GL_PCT = sum(NUM_BELOW) / NUM_TEST_S * 100,
+            ABOVE_GL_PCT = sum(NUM_ABOVE) / NUM_TEST_S * 100) %>%
+  mutate(across(ends_with("PCT"), round)) %>% 
+  rename("Below Grade Level" = BELOW_GL_PCT, 
+         "At or Above Grade Level" = ABOVE_GL_PCT,
+         "NUM_TEST" = NUM_TEST_S) %>%
+  pivot_longer(cols=c(`Below Grade Level`,`At or Above Grade Level`)) %>%
+    mutate(DISTRICT_CODE = 1,
+           DISTRICT = "Georgia",
+          "label"=case_when(value >=10~paste0(round(value,1),"%"),
+                             TRUE~""))
+
+df_gosa_eog_r <- df_gosa_lexile %>%
+  filter(DISTRICT == paste0(toupper(ctys)," COUNTY")) %>%  
+  rename("Below Grade Level" = BELOW_GL_PCT, 
+         "At or Above Grade Level" = ABOVE_GL_PCT) %>%
+  pivot_longer(cols=c(`Below Grade Level`,`At or Above Grade Level`)) %>%
+    mutate("label"=case_when(value >=10~paste0(value,"%"),
+                             TRUE~""),
+           DISTRICT=str_to_title(DISTRICT)) %>%
+  rbind(state_avg)
+
+df_gosa_eog_r %>%
+  graph(graph_type = "bar","DISTRICT","value",group="name",y_lab = "",x_lab="",show_legend = TRUE,label="label",
+        caption=paste0("Note: ", format(unique(as.numeric(df_gosa_eog_r$NUM_TEST[1])),big.mark=","), " Total Students Tested in ",ctys," County \n (Statewide: ",  format(unique(as.numeric(df_gosa_eog_r$NUM_TEST[3])),big.mark=","),")\n",source_gosa),
+        pct_y=TRUE,disable_y = FALSE) +
+  scale_y_continuous(limits=c(0,102)) +
+  scale_x_discrete(limits = c("Georgia",paste0(ctys, " County")))
+```
+
+---
+
+## 8th Grade Math End-of-Grade Assessment Scores, `r unique(df_gosa_eog$LONG_SCHOOL_YEAR)`
+
+```{r slide 20 eighth grade math, fig.width=14, fig.height=8, dev='svg', dev.args=list(bg="transparent") }
+
+df_gosa_eog_m <- df_gosa_eog %>%
+  filter(ACDMC_LVL == 8 & SUBGROUP_NAME == "All Students" & TEST_CMPNT_TYP_NM == "Mathematics" & INSTN_NUMBER == "ALL") %>%
+    mutate("label"=case_when(pct>=10~paste0(pct,"%"),
+                             TRUE~""),
+           LONG_SCHOOL_YEAR=paste0(LONG_SCHOOL_YEAR," School Year"),
+           pct=as.numeric(pct),
+           level=factor(level,levels=rev(c("Beginning","Developing","Proficient","Distinguished")))) 
+
+df_gosa_eog_m %>%
+  graph(graph_type = "bar","SCHOOL_DSTRCT_NM","pct","level",y_lab = "",x_lab="",show_legend = TRUE,label="label",
+        legend_lab = "Level of Achievement",
+        caption=paste0("Note: ", format(unique(as.numeric(df_gosa_eog_m$NUM_TESTED_CNT[df_gosa_eog_m$SCHOOL_DSTRCT_NM!="All Schools"])),big.mark=","), " Total Students Tested\n",source_gosa),
+        pct_y=TRUE,disable_y = TRUE)
+```
+
+---
+
+## Graduation Rate, Class of 2023
+
+:::::::::::::: {.columns}
+::: {.column}
+
+<!-- ```{r slide 21 lhs ga grad rate heatmap breaks,  fig.width=8,fig.height=6,echo = FALSE, message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), results='hide',include=FALSE} -->
+
+<!-- grad_rate <- read_csv("D. data/Graduation_Rate_2022-2023.csv") -->
+<!-- citys <- grad_rate %>% -->
+<!--   filter(!str_detect(tolower(SCHOOL_DSTRCT_NM),"county")) %>% -->
+<!--   pull(SCHOOL_DSTRCT_NM) -->
+<!-- citys <- c(citys,"Decatur City","Trion town","Atlanta City","Dalton City") -->
+
+<!-- # grad rate -->
+<!-- county_geom <- mds_counties("Georgia") %>% -->
+<!--   select(NAME) -->
+<!-- city_geom <- mds_places("Georgia") %>% -->
+<!--   mutate(NAME=str_replace(NAMELSAD,"city","City")) %>% -->
+<!--   filter(NAME %in% citys) %>% -->
+<!--   select(NAME) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+<!-- geoms <- county_geom %>% -->
+<!--   rbind(city_geom) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"town","City")) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- grad_rate_sf <- grad_rate %>% -->
+<!--   mutate(NAME=str_replace(SCHOOL_DSTRCT_NM," Public Schools", " City")) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"City Schools of Decatur", "Decatur City")) %>% -->
+<!--   mutate(NAME=str_remove(NAME," County")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Savannah-")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Griffin-")) %>%  -->
+<!--   mutate(NAME=str_remove(NAME,"Thomaston-")) %>% -->
+<!--   left_join(geoms) %>% -->
+<!--   st_as_sf() %>% -->
+<!--   mutate(PROGRAM_PERCENT=round(as.numeric(PROGRAM_PERCENT),1)) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- breaks <- getJenksBreaks(grad_rate_sf$PROGRAM_PERCENT,6) -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>% -->
+<!--   mutate("class"=base::cut(dig.lab=10,PROGRAM_PERCENT,unique(breaks),include.lowest=TRUE)) -->
+
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\[") -->
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\]") -->
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\(") -->
+<!-- grad_rate_sf$class <- str_replace(grad_rate_sf$class,"\\,","% \\- ") -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>% -->
+<!--   mutate(class=paste0(class,"%")) %>% -->
+<!--   mutate(class=as.factor(class)) %>% -->
+<!--   mutate(class=reorder(class,PROGRAM_PERCENT)) -->
+
+<!-- clay <- grad_rate_sf %>% -->
+<!--   filter(is.na(PROGRAM_PERCENT)) -->
+
+<!-- classes <- as.character(unique(grad_rate_sf$class)) -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>%  -->
+<!--   filter(!is.na(PROGRAM_PERCENT)) %>% -->
+<!--   mutate(levels=case_when(class==classes[1]~2, -->
+<!--                           class==classes[4]~5, -->
+<!--                           class==classes[2]~4, -->
+<!--                           class==classes[5]~3, -->
+<!--                           class==classes[3]~2, -->
+<!--                           class==classes[6]~1)) -->
+<!-- bbox <- cty_map %>% -->
+<!--   filter(str_detect(NAME,paste0(ctys_region,collapse="|"))) %>% -->
+<!--   st_bbox() -->
+
+<!-- grad_rate_sf %>% -->
+<!--   filter(str_detect(SCHOOL_DSTRCT_NM,paste0(ctys_region,collapse="|"))) %>% -->
+<!--   #st_crop(bbox) %>% -->
+<!--   mutate(class=reorder(class,(levels))) %>% -->
+<!--   choropleth(col="class",show_legend=TRUE, -->
+<!--              pal = c(default_pal_1way[1],default_pal_1way[4],default_pal_1way[2],default_pal_1way[5],default_pal_1way[3],"#554F47"), -->
+<!--              caption=source_gosa,legend_lab=paste0("Graduation Rates, ", y_gosa), -->
+<!--              line_width = default_graph_linewidth/4) + -->
+<!--   #geom_sf(data=clay,mapping=aes(fill="No Data"),linewidth=default_graph_linewidth/4,color="white") + -->
+<!--   geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000") + -->
+<!--   theme(legend.position = "bottom", -->
+<!--         legend.box = "horizontal") + -->
+<!--   guides(fill=guide_legend(nrow=2,title.hjust = 0.5,title.position = "top")) -->
+<!-- ``` -->
+
+<!-- ```{r slide 21 lhs ga grad rate heatmap gradient,  fig.width=8,fig.height=6,echo = FALSE, message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), results='hide',include=TRUE} -->
+
+<!-- grad_rate <- read_csv("D. data/Graduation_Rate_2022-2023.csv") -->
+<!-- citys <- grad_rate %>% -->
+<!--   filter(!str_detect(tolower(SCHOOL_DSTRCT_NM),"county")) %>% -->
+<!--   pull(SCHOOL_DSTRCT_NM) -->
+<!-- citys <- c(citys,"Decatur City","Trion town","Atlanta City","Dalton City") -->
+
+<!-- # grad rate -->
+<!-- county_geom <- mds_counties("Georgia") %>% -->
+<!--   select(NAME) -->
+<!-- city_geom <- mds_places("Georgia") %>% -->
+<!--   mutate(NAME=str_replace(NAMELSAD,"city","City")) %>% -->
+<!--   filter(NAME %in% citys) %>% -->
+<!--   select(NAME) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+<!-- geoms <- county_geom %>% -->
+<!--   rbind(city_geom) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"town","City")) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- grad_rate_sf <- grad_rate %>% -->
+<!--   mutate(NAME=str_replace(SCHOOL_DSTRCT_NM," Public Schools", " City")) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"City Schools of Decatur", "Decatur City")) %>% -->
+<!--   mutate(NAME=str_remove(NAME," County")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Savannah-")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Griffin-")) %>%  -->
+<!--   mutate(NAME=str_remove(NAME,"Thomaston-")) %>% -->
+<!--   left_join(geoms) %>% -->
+<!--   st_as_sf() %>% -->
+<!--   mutate(PROGRAM_PERCENT=round(as.numeric(PROGRAM_PERCENT),1)) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- clay <- grad_rate_sf %>% -->
+<!--   filter(is.na(PROGRAM_PERCENT)) -->
+
+<!-- cty_highlight <- cty_highlight %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+
+<!-- grad_rate <- read_csv("D. data/Graduation_Rate_2022-2023.csv") -->
+<!-- citys <- grad_rate %>% -->
+<!--   filter(!str_detect(tolower(SCHOOL_DSTRCT_NM),"county")) %>% -->
+<!--   pull(SCHOOL_DSTRCT_NM) -->
+<!-- citys <- c(citys,"Decatur City","Trion town","Atlanta City","Dalton City") -->
+
+<!-- # grad rate -->
+<!-- county_geom <- mds_counties("Georgia") %>% -->
+<!--   select(NAME) -->
+<!-- city_geom <- mds_places("Georgia") %>% -->
+<!--   mutate(NAME=str_replace(NAMELSAD,"city","City")) %>% -->
+<!--   filter(NAME %in% citys) %>% -->
+<!--   select(NAME) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+<!-- geoms <- county_geom %>% -->
+<!--   rbind(city_geom) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"town","City")) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- grad_rate_sf <- grad_rate %>% -->
+<!--   mutate(NAME=str_replace(SCHOOL_DSTRCT_NM," Public Schools", " City")) %>% -->
+<!--   mutate(NAME=str_replace(NAME,"City Schools of Decatur", "Decatur City")) %>% -->
+<!--   mutate(NAME=str_remove(NAME," County")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Savannah-")) %>% -->
+<!--   mutate(NAME=str_remove(NAME,"Griffin-")) %>%  -->
+<!--   mutate(NAME=str_remove(NAME,"Thomaston-")) %>% -->
+<!--   left_join(geoms) %>% -->
+<!--   st_as_sf() %>% -->
+<!--   mutate(PROGRAM_PERCENT=round(as.numeric(PROGRAM_PERCENT),1)) %>% -->
+<!--   st_set_crs(st_crs(county_geom)) -->
+
+<!-- breaks <- getJenksBreaks(grad_rate_sf$PROGRAM_PERCENT,6) -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>% -->
+<!--   mutate("class"=base::cut(dig.lab=10,PROGRAM_PERCENT,unique(breaks),include.lowest=TRUE)) -->
+
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\[") -->
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\]") -->
+<!-- grad_rate_sf$class <- str_remove_all(grad_rate_sf$class,"\\(") -->
+<!-- grad_rate_sf$class <- str_replace(grad_rate_sf$class,"\\,","% \\- ") -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>% -->
+<!--   mutate(class=paste0(class,"%")) %>% -->
+<!--   mutate(class=as.factor(class)) %>% -->
+<!--   mutate(class=reorder(class,PROGRAM_PERCENT)) -->
+
+<!-- clay <- grad_rate_sf %>% -->
+<!--   filter(is.na(PROGRAM_PERCENT)) -->
+
+<!-- classes <- as.character(unique(grad_rate_sf$class)) -->
+
+<!-- grad_rate_sf <- grad_rate_sf %>%  -->
+<!--   filter(!is.na(PROGRAM_PERCENT)) %>% -->
+<!--   mutate(levels=case_when(class==classes[1]~2, -->
+<!--                           class==classes[4]~5, -->
+<!--                           class==classes[2]~4, -->
+<!--                           class==classes[5]~3, -->
+<!--                           class==classes[3]~2, -->
+<!--                           class==classes[6]~1)) -->
+<!-- bbox <- cty_map %>% -->
+<!--   filter(str_detect(NAME,paste0(ctys_region,collapse="|"))) %>% -->
+<!--   st_bbox() -->
+
+<!-- grad_rate_sf %>% -->
+<!--   filter(str_detect(SCHOOL_DSTRCT_NM,paste0(ctys_region,collapse="|"))) %>% -->
+<!--   #st_crop(bbox) %>% -->
+<!--   mutate(class=reorder(class,(levels))) %>% -->
+<!--   choropleth(col="class",show_legend=TRUE, -->
+<!--              pal = c(default_pal_1way[1],default_pal_1way[4],default_pal_1way[2],default_pal_1way[5],default_pal_1way[3],"#554F47"), -->
+<!--              caption=source_gosa,legend_lab=paste0("Graduation Rates, ", y_gosa), -->
+<!--              line_width = default_graph_linewidth/4) + -->
+<!--   #geom_sf(data=clay,mapping=aes(fill="No Data"),linewidth=default_graph_linewidth/4,color="white") + -->
+<!--   geom_sf(data=cty_highlight,fill="#FFFFFF00",linewidth=2,color="#000000") + -->
+<!--   theme(legend.position = "bottom", -->
+<!--         legend.box = "horizontal") + -->
+<!--   guides(fill=guide_legend(nrow=2,title.hjust = 0.5,title.position = "top")) -->
+<!-- ``` -->
+
+```{r slide 21 lhs ga grad rate heatmap gradient, fig.width=8, fig.height=6, dev.args=list(bg="transparent"), results='hide',include=TRUE}
+
+schools <- st_read("D. data/ga_school_districts.shp") %>%
+  mutate(NAME=str_remove(NAME," School District"),
+         NAME=case_when(NAME == "Dougherty"~"Dougherty County",
+                        TRUE~NAME))
+
+df_gosa_grad <- df_gosa_grad %>%
+   mutate(NAME=str_replace(SCHOOL_DSTRCT_NM," Public Schools", " City")) %>% 
+   mutate(NAME=str_replace(NAME,"City Schools of Decatur", "Decatur City")) %>% 
+   mutate(NAME=str_remove(NAME,"Savannah-")) %>% 
+   mutate(NAME=str_remove(NAME,"Griffin-")) %>%  
+   mutate(NAME=str_remove(NAME,"Thomaston-")) 
+
+grad_rate_sf <- schools %>%
+  filter(!str_detect(NAME,"Fort ")) %>%
+  left_join(df_gosa_grad,by=c("NAME")) %>% 
+  filter(LABEL_LVL_1_DESC=="Grad Rate -ALL Students" & DETAIL_LVL_DESC == "District") %>%
+  st_as_sf() %>%
+  mutate(PROGRAM_PERCENT=round(as.numeric(PROGRAM_PERCENT),1))
+
+clay <- grad_rate_sf %>%
+  filter(is.na(PROGRAM_PERCENT))
+
+ds_highlight <- grad_rate_sf %>%
+  filter(str_detect(NAME,paste0(ctys,collapse="|")))
+
+region <- mds_counties() %>%
+  filter(NAME %in% ctys_region) %>%
+  st_union() %>%
+  st_transform(st_crs(grad_rate_sf))
+
+within <- grad_rate_sf %>%
+  filter(!is.na(PROGRAM_PERCENT)) %>%
+  st_make_valid() %>%
+  st_centroid() %>%
+  st_filter(region) %>%
+  pull(NAME)
+
+grad_rate_sf %>%
+  filter(!is.na(PROGRAM_PERCENT),
+         NAME %in% within) %>%
+  #st_crop(bbox) %>%
+  #mutate(class=reorder(class,(levels))) %>%
+  choropleth(col="PROGRAM_PERCENT",show_legend=TRUE,
+             type="gradient",
+             legend_pct = TRUE,
+             pal = default_pal_1way,
+             caption=source_gosa,legend_lab=paste0("Graduation Rates,\n", y_gosa),
+             line_width = default_graph_linewidth/4) +
+  #geom_sf(data=clay,fill="black",linewidth=default_graph_linewidth/4,color="white") +
+  geom_sf(data=ds_highlight,fill="#FFFFFF00",linewidth=2,color="#000000") #+
+  # theme(legend.position = "bottom",
+  #       legend.box = "horizontal")# +
+ # guides(fill=guide_legend(nrow=2,title.hjust = 0.5,title.position = "top")) %>%
+
+all_ctys <- grad_rate_sf %>%
+  filter(!is.na(PROGRAM_PERCENT)) %>%
+  #st_crop(bbox) %>%
+  #mutate(class=reorder(class,(levels))) %>%
+  choropleth(col="PROGRAM_PERCENT",show_legend=TRUE,
+             type="gradient",
+             legend_pct = TRUE,
+             pal = default_pal_1way,
+             caption=source_gosa,legend_lab=paste0("Graduation Rates,\n", y_gosa),
+             line_width = default_graph_linewidth/4) +
+  geom_sf(data=clay,fill="black",linewidth=default_graph_linewidth/4,color="white") +
+  geom_sf(data=ds_highlight,fill="#FFFFFF00",linewidth=2,color="#000000") #+
+  # theme(legend.position = "bottom",
+  #       legend.box = "horizontal")# +
+ # guides(fill=guide_legend(nrow=2,title.hjust = 0.5,title.position = "top")) %>%
+
+ggsave(all_ctys,filename="E. visuals/E.1. Graduation Rates, all counties.png")
+```
+:::
+
+::: {.column}
+
+```{r rhs hs table,  fig.width=8,fig.height=6, dev.args=list(bg="transparent") }
+hs_test <- df_gosa_grad %>%
+  filter(str_detect(SCHOOL_DSTRCT_NM,ctys_string) & INSTN_NUMBER != "ALL",
+         LABEL_LVL_1_DESC == "Grad Rate -ALL Students")
+
+cty_grads <- df_gosa_grad %>%
+  filter(str_detect(SCHOOL_DSTRCT_NM,ctys_string) & INSTN_NUMBER != "ALL",
+         LABEL_LVL_1_DESC == "Grad Rate -ALL Students") %>%
+  select(SCHOOL_DSTRCT_NM, INSTN_NAME, PROGRAM_PERCENT)
+
+ga_avg <- df_gosa_grad %>%
+  filter(DETAIL_LVL_DESC == "State",
+         LABEL_LVL_1_DESC == "Grad Rate -ALL Students") %>%
+  select(colnames(cty_grads)) %>%
+  mutate(SCHOOL_DSTRCT_NM = "Statewide",
+         INSTN_NAME = "All Georgia Schools")
+
+if(nrow(hs_test) > 1) {
+statement <- cty_grads %>%
+  rbind(ga_avg) %>%
+  mutate(PROGRAM_PERCENT=case_when(PROGRAM_PERCENT != "TFS" ~ paste0(PROGRAM_PERCENT,"%"),
+                                   TRUE~"No Data")) %>%
+  kable(col.names = c("School District", "School", "Graduation Rate"))
+} else {
+  statement <- paste0("The overall graduation rate **in Georgia** for ",y_gosa," was **", ga_avg$PROGRAM_PERCENT, "%**, versus **", cty_grads$PROGRAM_PERCENT, "%** for **", cty_grads$INSTN_NAME, "**, the only high school **in ", ctys, " County.**")
+}
+```
+`r {statement}`
+:::
+::::::::::::::
+
+---
+
+```{r,  fig.width=8,fig.height=6,echo = FALSE, message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), }
+college_going <- df_gosa_college_going %>%
+  filter(str_detect(SCHOOL_DSTRCT_NM,ctys_string), INSTN_NUMBER == "ALL") %>%
+  mutate(TOTAL_ENROLLED_IN_COLLEGE=as.numeric(TOTAL_ENROLLED_IN_COLLEGE),
+         TOTAL_HS_GRADS=as.numeric(TOTAL_HS_GRADS)) %>%
+  filter(!is.na(TOTAL_ENROLLED_IN_COLLEGE)) %>%
+  filter(!is.na(TOTAL_HS_GRADS)) %>%
+  group_by(SCHOOL_YEAR) %>%
+  summarize(TOTAL_ENROLLED_IN_COLLEGE=sum(TOTAL_ENROLLED_IN_COLLEGE),
+            TOTAL_HS_GRADS=sum(TOTAL_HS_GRADS)) %>%
+  ungroup() %>%
+  mutate("pct"=100*(TOTAL_ENROLLED_IN_COLLEGE/(TOTAL_HS_GRADS))) %>%
+  mutate("label"=case_when(pct>=5~paste0(round(pct,1),"%"),
+                             TRUE~"")) 
+
+if(length(ctys) == 1) {
+statement <- paste0("An **annual average of ", round(mean(college_going$pct),1), "%** of graduates from ", ctys, " County School District **enrolled in college within 16 months of graduation from 2010-2022**")
+} else {
+  statement <- ""
+}
+```
+
+## `r statement`
+
+:::::::::::::: {.columns}
+ 
+::: {.column}
+```{r slide 22 college going rate line, dev.args=list(bg="transparent"), fig.width=8, fig.height=6, dev='svg'}
+college_going %>%
+  mutate("label"=paste0(floor(pct),"%")) %>%
+  graph(graph_type = "line","SCHOOL_YEAR","pct",
+        pct_y=TRUE,y_lab = "",x_lab="School Year",show_legend = FALSE,
+        legend_lab = "Enrollment",caption=source_gosa) +
+  scale_y_continuous(labels=percent_marker,limits=c(0,100)) +
+  scale_x_discrete(breaks=c("2010","2013","2016","2019","2022")) +
+  geom_hline(yintercept=mean(college_going$pct),linetype="dashed",color="black") +
+  # geom_text_repel(aes(label=label),color="black",size=10,
+  #                 arrow = arrow(type="closed",length=unit(0,"cm")),nudge_y=1) +
+  coord_cartesian(xlim = c(0, 12),
+                  clip = "off") +
+  theme(plot.margin = unit(c(0,4,1,1), "lines")) +
+        # axis.text.y = element_text(color = "grey85"),
+        # axis.ticks = element_line(color = "white")) +
+  annotate(geom = "text",
+           x = 12, 
+           y = mean(college_going$pct),
+           label = "Annual Average\nSince 2010",
+           color = "black",
+           size = default_axis_text_size/6,
+           face = "bold") 
+```
+:::
+
+::: {.column}
+```{r slide 22 college going rate table,  fig.width=8, fig.height=6, dev.args=list(bg="transparent") }
+college_going %>%
+  mutate("pct"=paste0(floor(pct),"%")) %>%
+  arrange(SCHOOL_YEAR) %>%
+  select(SCHOOL_YEAR,TOTAL_HS_GRADS,TOTAL_ENROLLED_IN_COLLEGE,pct) %>%
+    kable(format.args=list(big.mark=","),align=c("l","r","r","r","r"),
+          col.names = c("School Year","Total Graduates","Total Enrolled in College 16 Months Later","College Going Rate"))
+```
+:::
+
+::::::::::::::
+
+---
+
+## Enrollment 1 Year After Graduation
+
+```{r slide 23 enrollment one year after grad bar, fig.width=14, fig.height=8,dev='svg', dev.args=list(bg="transparent") }
+if (length(ctys) == 1) {
+  df_gosa_enrollment_1yr %>%
+  filter(GRADUATION_YEAR >= max(year)-10) %>%
+    mutate(SYSTEM_TYPE=case_when(str_detect(tolower(SYSTEM_TYPE),"working in")~"Working in Georgia",
+             TRUE~str_to_title(str_remove(SYSTEM_TYPE,"Enrolled in "))),
+           GRADUATION_YEAR=as.integer(GRADUATION_YEAR)) %>%
+  group_by(SYSTEM_TYPE,GRADUATION_YEAR) %>%
+  summarise(YR1_ENR_PCT=sum(YR1_ENR_PCT)) %>%
+  ungroup() %>%
+  mutate(labcol = case_when(SYSTEM_TYPE=="Georgia Public College/University"~"white",
+                             TRUE~"black")) %>%
+  mutate(SYSTEM_TYPE=factor(SYSTEM_TYPE,levels=rev(c("Georgia Public College/University",
+                                           "Working in Georgia",
+                                           "Georgia Public Technical College",
+                                           "Georgia Private College/University",
+                                           "College/University Outside Of Georgia",
+                                           "Unknown"))),
+         "label"=case_when(YR1_ENR_PCT>=10~paste0(round(YR1_ENR_PCT,1),"%"),
+                             TRUE~"")) %>%
+  graph(graph_type = "bar","GRADUATION_YEAR","YR1_ENR_PCT","SYSTEM_TYPE",
+        pct_y=TRUE,y_lab = "",x_lab="",show_legend = FALSE,
+        legend_lab = "Enrollment",caption=source_gosa,disable_y = TRUE) +
+  new_scale_colour() +
+  geom_text(mapping=aes(label=format(label,digits=2),
+                                            color=labcol),
+                fontface="bold",
+                position=position_stack(vjust=0.5),
+                size=default_axis_text_size/3) +
+  scale_color_identity() +
+  # facet_wrap(~SYSTEM_TYPE) +
+  # theme(strip.background = element_rect(fill = "white")) +
+  theme(legend.position = "bottom") +
+  guides(color=guide_legend(nrow=4,ncol=2)) +
+  scale_x_continuous(breaks = c(max(year)-10,max(year)-8,max(year)-6,max(year)-4,max(year)-2,max(year)))
+} else {
+df_gosa_enrollment_1yr %>%
+  mutate(est=round((YR1_ENR_PCT/100)*GRAD_COUNT)) %>%
+  group_by(GRADUATION_YEAR,SYSTEM_TYPE) %>%
+  summarise(est=sum(est),
+            GRAD_COUNT=sum(GRAD_COUNT)) %>%
+  mutate(YR1_ENR_PCT=100*(est/GRAD_COUNT)) %>%
+  filter(GRADUATION_YEAR >= max(year)-10) %>%
+    mutate(SYSTEM_TYPE=case_when(str_detect(tolower(SYSTEM_TYPE),"working in")~"Working in Georgia",
+             TRUE~str_to_title(str_remove(SYSTEM_TYPE,"Enrolled in "))),
+           GRADUATION_YEAR=as.integer(GRADUATION_YEAR)) %>%
+  group_by(SYSTEM_TYPE,GRADUATION_YEAR) %>%
+  summarise(YR1_ENR_PCT=sum(YR1_ENR_PCT)) %>%
+  ungroup() %>%
+  mutate(labcol = case_when(SYSTEM_TYPE=="Georgia Public College/University"~"white",
+                             TRUE~"black")) %>%
+  mutate(SYSTEM_TYPE=factor(SYSTEM_TYPE,levels=rev(c("Georgia Public College/University",
+                                           "Working in Georgia",
+                                           "Georgia Public Technical College",
+                                           "Georgia Private College/University",
+                                           "College/University Outside Of Georgia",
+                                           "Unknown"))),
+         "label"=case_when(YR1_ENR_PCT>=10~paste0(round(YR1_ENR_PCT,1),"%"),
+                             TRUE~"")) %>%
+  graph(graph_type = "bar","GRADUATION_YEAR","YR1_ENR_PCT","SYSTEM_TYPE",
+        pct_y=TRUE,y_lab = "",x_lab="",show_legend = FALSE,
+        legend_lab = "Enrollment",caption=source_gosa,disable_y = TRUE) +
+  new_scale_colour() +
+  geom_text(mapping=aes(label=format(label,digits=2),
+                                            color=labcol),
+                fontface="bold",
+                position=position_stack(vjust=0.5),
+                size=default_axis_text_size/3) +
+  scale_color_identity() +
+  # facet_wrap(~SYSTEM_TYPE) +
+  # theme(strip.background = element_rect(fill = "white")) +
+  theme(legend.position = "bottom") +
+  guides(color=guide_legend(nrow=4,ncol=2)) +
+  scale_x_continuous(breaks = c(max(year)-10,max(year)-8,max(year)-6,max(year)-4,max(year)-2,max(year)))
+}
+```
+
+---
+
+## 6-year Post High School Progression, Class of `r max(df_gosa_outcomes$SCHOOL_YEAR) - 6`
+
+```{r slide 24 six year progression bar, fig.width=14, fig.height=8, dev='svg', dev.args=list(bg="transparent") }
+if (length(ctys) == 1) {
+df_gosa_outcomes %>% 
+  filter(GRADUATION_YEAR==max(df_gosa_outcomes$SCHOOL_YEAR) - 6, INSTN_NUMBER != "ALL") %>% 
+    mutate("label"=case_when(PROGRESSION_PCT>=5.1~paste0(round(PROGRESSION_PCT,1),"%"),
+                             TRUE~""),
+           PRG_TYPE=str_replace(PRG_TYPE,"Working without Postsecondary Credential or Enrollment","Working, no Postsecondary")) %>%
+  mutate(PRG_TYPE=factor(PRG_TYPE,levels=rev(c("Enrolled in Postsecondary",
+                                            "Working, no Postsecondary",
+                                            "Earned Postsecondary Credential",
+                                            "Earned Career Pathway Credential, working",
+                                            "Unknown")))) %>%
+  graph(graph_type = "bar","SCHOOL_YEAR","PROGRESSION_PCT","PRG_TYPE",
+        pct_y=TRUE,y_lab = "",x_lab="",show_legend = TRUE,label="label",
+        legend_lab = "Status",caption=source_gosa) +
+  scale_x_continuous(breaks=c(max(df_gosa_outcomes$SCHOOL_YEAR) - 6,
+                              max(df_gosa_outcomes$SCHOOL_YEAR) - 5,
+                              max(df_gosa_outcomes$SCHOOL_YEAR) - 4,
+                              max(df_gosa_outcomes$SCHOOL_YEAR) - 3,
+                              max(df_gosa_outcomes$SCHOOL_YEAR) - 2,
+                              max(df_gosa_outcomes$SCHOOL_YEAR) - 1,
+                              max(df_gosa_outcomes$SCHOOL_YEAR))) +
+  theme(legend.position = "bottom") +
+  guides(color=guide_legend(nrow=3))
+} else {
+  print("Omitted")
+}
+```
+
+---
+
+## Technical College Completions for `r regions`
+
+:::::::::::::: {.columns}
+ 
+::: {.column}
+```{r slide 25 tech college completions table, fig.width=14, fig.height=8, dev.args=list(bg="transparent"), }
+df_compl <- df_lightcast %>%
+  pluck("Tech College Completions") %>% 
+  select(year = Year, `Total Completions`) %>% 
+  filter(!is.na(year))
+
+df_compl %>%
+  mutate(year=as.character(year)) %>%
+  kable(col.names = c("Year","Total Completions"),
+        format.args = list(big.mark=","), 
+        caption = "Includes: Tri-County Technical College")
+```
+:::
+ 
+::: {.column}
+```{r slide 25 tech college completions graph, fig.width=14,fig.height=8, dev='svg', dev.args=list(bg="transparent") }
+
+df_compl %>%
+  # filter(`Academic Year` %in% c("2013-14","2014-15","2015-16","2016-17",
+  #                               "2017-2018","2018-2019","2019-2020","2020-21")) %>%
+  # mutate(Completions=as.numeric(Completions)) %>%
+  graph(graph_type="line",x="year",y="Total Completions",
+        commas_y=TRUE,x_lab = "",y_lab="Completions",caption="IPEDS; Lightcast") +
+  scale_y_continuous(limits=c(0.8*min(df_compl$`Total Completions`),
+                              1.25*max(df_compl$`Total Completions`)),
+                     labels = scales::comma)
+  #scale_x_discrete(breaks=c("2013-14","2016-17","2020-21")) #+
+  #geom_vline(xintercept="2013-14",linetype="dashed") +
+  #geom_vline(xintercept="2020-21",linetype="dashed")
+```
+:::
+::::::::::::::
+
+---
+
+## Postsecondary Completions for `r regions`
+
+:::::::::::::: {.columns}
+ 
+::: {.column}
+```{r,  fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+# compl_2000 <- df_ipeds %>% 
+#   mutate(Completions=as.numeric(Completions)) %>%
+#   filter(`Academic Year` == "2000-01") %>%
+#   pull(Completions)
+# 
+# compl_2020 <- df_ipeds %>% 
+#   mutate(Completions=as.numeric(Completions)) %>%
+#   filter(`Academic Year` == "2020-21") %>%
+#   pull(Completions)
+
+if(ps_completions_mode == "old") {
+df_compl <- df_lightcast %>%
+  pluck("Completions by Institution") %>%
+  filter(!is.na(Institution)) %>%
+  mutate_at(5:9,~as.numeric(.x)) %>%
+  pivot_longer(cols=5:9) %>%
+  mutate(year=str_remove(str_remove(name,"All Programs > All Completions > ")," Completions")) %>%
+  mutate(year=as.numeric(year)) %>%
+  filter(!is.na(value)) %>%
+  group_by(year) %>%
+  summarise(value=sum(value)) 
+} else {
+  df_compl <- df_lightcast %>%
+  pluck("Completions by Institution") %>%
+    kable(format.args=list(big.mark=","),
+        align = c("l","r","r","r","r","r","r"))
+}
+# 
+# pct <- paste0(abs(round(100*((compl_2020-compl_2000)/compl_2000),1)),"%")
+# 
+# if(compl_2020 > compl_2000) {
+#   verb <- "grew"
+# } else {
+#   verb <- "fell"
+# }
+
+df_lightcast %>%
+  pluck("Regional Completions by CIP") %>%
+  filter(!is.na(Description)) %>%
+  arrange(desc(`All Programs- Total 2023 Completions`)) %>%
+  head(n=15) %>%
+  kable(format.args=list(big.mark=","),
+        align = c("l","l","r","r"))
+# 
+# Technical college **completions** in the `r tech_college_name` system **`r verb` by `r pct`** from 2000 to 2020, from `r format(compl_2000,big.mark=",")` in 2000 to `r format(compl_2020,big.mark=",")` in 2020
+```
+
+:::
+::: {.column}
+```{r slide 25 college completions, fig.width=14, fig.height=8, dev.args=list(bg="transparent") }
+
+if(ps_completions_mode == "old") {
+df_compl <- df_lightcast %>%
+ df_compl %>%
+  # filter(`Academic Year` %in% c("2013-14","2014-15","2015-16","2016-17",
+  #                               "2017-2018","2018-2019","2019-2020","2020-21")) %>%
+  # mutate(Completions=as.numeric(Completions)) %>%
+  graph(graph_type="line",x="year",y="value",
+        commas_y=TRUE,x_lab = "",y_lab="Completions",caption="IPEDS; Lightcast")  +
+  scale_y_continuous(limits=c(0.8*min(df_compl$value),1.25*max(df_compl$value)),
+                     labels = scales::comma) #+
+  #scale_x_discrete(breaks=c("2013-14","2016-17","2020-21")) #+
+  #geom_vline(xintercept="2013-14",linetype="dashed") +
+  #geom_vline(xintercept="2020-21",linetype="dashed")
+} else {
+  df_compl
+}
+```
+:::
+:::::::::::::: 
+
+---
+
+# County Economy
+
+---
+
+## `r ctys` County Employment Growth, `r year - 10`-`r year + 10`
+
+```{r slide 27 county employment lightcast projection line, fig.width=14, fig.height=8,dev='svg', dev.args=list(bg="transparent"),  results='hide'}
+lightcast_emg <- df_lightcast %>%
+  pluck("C-emp growth") %>%
+  rename("Geography"=`...1`) %>%
+  filter(!is.na(`2014 Jobs`)) %>%
+  filter(Geography=="County") %>%
+  mutate_if(is.numeric,as.character) %>%
+  pivot_longer(cols=2:21) %>%
+  mutate(name=str_remove(name, " Jobs"),
+         value=as.numeric(value),
+         is_projection=case_when(name>year(Sys.Date())~"Projection",
+                                 TRUE~"Not Projection")) 
+
+lightcast_emg %>%
+  mutate("label"=case_when(name %in% c("2014","2024","2025","2033")~format(value,big.mark=","),
+                           TRUE~"")) %>%
+  graph(graph_type = "line","name","value","is_projection",commas_y = TRUE,
+        x_lab = "",y_lab="Total Jobs",caption=source_lightcast) +
+  scale_y_continuous(labels=scales::comma,
+                     limits=c(0.9*min(lightcast_emg$value),1.1*max(lightcast_emg$value))) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  geom_text_repel(aes(label=label),color="black",size=6,
+                  arrow = arrow(type="closed",length=unit(0,"cm")),
+                  fontface="bold",
+                  nudge_y=0.05*mean(lightcast_emg$value))
+```
+
+---
+
+## `r ctys` County Industry Overview 
+
+```{r county industry overview table,  fig.width=10,fig.height=8,echo = FALSE, message=FALSE, warning=FALSE, dev.args=list(bg="transparent"), }
+df_lightcast %>%
+  pluck("C- ind overview") %>%
+  mutate(`2019 - 2024 % Change` = case_when(`2019 - 2024 % Change` != "Insf. Data"~
+                                            paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+                                            TRUE~"Insf. Data"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ 
+          paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=",")),
+                                             TRUE~"Insf. Data"))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),
+        align = c("l","l","r","r","r","r","r","r","r","r","r"))
+
+```
+
+---
+
+## Growing Industries in `r ctys` County 
+
+```{r county industry growth table,  fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+df_lightcast %>%
+  pluck("C- detailed ind") %>%
+    filter(`2019 - 2024 % Change` >= 0, !is.na(Description),
+         `2019 Jobs` > 50) %>%
+  mutate(`2019 - 2024 % Change` = paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=",")))) %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-contains("...")) %>% 
+  #arrange(-`2019 - 2024 Change`) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+##  Declining Industries in `r ctys` County 
+
+```{r county industry decline, fig.width=10, fig.height=8, dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("C- detailed ind") %>%
+  filter(`2019 - 2024 % Change` < 0, !is.na(Description),
+         `2019 Jobs` > 50) %>%
+  mutate(`2019 - 2024 % Change` = paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=","))))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-contains("...")) %>% 
+  #arrange(`2019 - 2024 Change`) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Projected Top `r ctys` County Occupations 
+
+```{r county occ projections, fig.width=10, fig.height=8, dev='svg', dev.args=list(bg="transparent") }
+
+df_lightcast %>%
+  pluck("C - occ overview") %>%
+  mutate_at(3:6,as.numeric) %>%
+  #arrange(-`2024 - 2033 Change`) %>%
+rename(`Projected 2024 - 2033 Change` = `2024 - 2033 Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%")) %>%
+  mutate_if(is.numeric,floor) %>%
+ # mutate_all(~replace(.,is.na(.),"Insf. Data")) %>%
+  mutate(`Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=","))))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(`Avg. Annual Earnings`)) %>%
+  mutate(`Projected 2024 - 2033 Change`=str_remove(`Projected 2024 - 2033 Change`,"NA%")) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r ctys` County Growth Occupations Requiring High School Diploma or Less 
+
+```{r county occ hs degree, fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+df_lightcast %>%
+  pluck("C - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("High school diploma or equivalent","No formal educational credential"))   %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+  #filter(rank <= 10) %>%
+  #arrange(rank) %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r ctys` Growth Occupations Requiring Some College, Associate's Degree, or Nondegree Award
+
+```{r county occ some college, fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+df_lightcast %>%
+  pluck("C - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("Some college, no degree","Associate's degree",
+                                                "Postsecondary nondegree award"))   %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+  #filter(rank <= 10) %>%
+  #arrange(rank) %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r ctys` County Growth Occupations Requiring Bachelor's Degree or Higher 
+
+```{r county occ bachelors plus, fig.width=10, fig.height=8,dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("C - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("Bachelor's degree",
+                                                "Master's degree",
+                                                "Doctoral or professional degree"))  %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+  #filter(rank <= 10) %>%
+  #arrange(rank) %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+# Regional Economy
+
+---
+
+## `r regions` Employment Growth, `r year - 10`-`r year + 10`
+
+```{r slide 36 region employment lightcast projection line,  fig.width=14, fig.height=8,dev='svg', dev.args=list(bg="transparent"),  results='hide'}
+lightcast_emg <- df_lightcast %>%
+  pluck("C-emp growth") %>%
+  rename("Geography"=`...1`) %>%
+  filter(!is.na(`2014 Jobs`)) %>%
+  filter(Geography=="Region") %>%
+  mutate_if(is.numeric,as.character) %>%
+  pivot_longer(cols=2:21) %>%
+  mutate(name=str_remove(name, " Jobs"),
+         value=as.numeric(value),
+         is_projection=case_when(name>year(Sys.Date())~"Projection",
+                                 TRUE~"Not Projection")) 
+
+lightcast_emg %>%
+  mutate("label"=case_when(name %in% c("2014","2024","2025","2033")~format(value,big.mark=","),
+                           TRUE~"")) %>%
+  graph(graph_type = "line","name","value","is_projection",commas_y = TRUE,
+        x_lab = "",y_lab="Total Jobs",caption=source_lightcast) +
+  scale_y_continuous(labels=scales::comma,
+                     limits=c(0.9*min(lightcast_emg$value),1.1*max(lightcast_emg$value))) +
+  theme(axis.text.x = element_text(angle = 90)) +
+    geom_text_repel(aes(label=label),color="black",size=6,
+                  arrow = arrow(type="closed",length=unit(0,"cm")),
+                  fontface="bold",
+                  nudge_y=0.03*mean(lightcast_emg$value))
+```
+
+---
+
+## `r regions` Industry Overview 
+
+```{r region industry overview,  fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+
+df_lightcast %>%
+  pluck("R- ind overview") %>%
+  mutate(`2019 - 2024 % Change` = case_when(`2019 - 2024 % Change` != "Insf. Data"~
+                                            paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+                                            TRUE~"Insf. Data"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ 
+          paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=",")),
+                                             TRUE~"Insf. Data"))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Growing Industries in `r regions` 
+
+
+
+```{r region industry growth, fig.width=10, fig.height=8, dev.args=list(bg="transparent"), }
+
+df_lightcast %>%
+  pluck("R- detailed ind") %>%
+  filter(`2019 - 2024 % Change` >= 0, !is.na(Description),
+         `2019 Jobs` > 50) %>%
+  mutate(`2019 - 2024 % Change` = paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=","))))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  #arrange(-`2019 - 2024 Change`) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+
+```
+
+---
+
+##  Declining Industries in `r regions` 
+
+```{r region industry decline, fig.width=10, fig.height=8,dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("R- detailed ind") %>%
+  filter(`2019 - 2024 % Change` < 0, !is.na(Description),
+         `2019 Jobs` > 50) %>%
+  mutate(`2019 - 2024 % Change` = paste0(round(100 * as.numeric(`2019 - 2024 % Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Earnings Per Job` != "Insf. Data" ~ paste0("\\$",format(as.numeric(`Avg. Earnings Per Job`),big.mark=","))))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  arrange(`2019 - 2024 Change`) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+
+```
+
+---
+
+## Projected Top `r regions` Occupations 
+
+```{r region occ projections, fig.width=10, fig.height=8,dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("R - occ overview") %>%
+  mutate_at(3:6,as.numeric) %>%
+  #arrange(-`Projected 2024 - 2033 Change`) %>%
+rename(`Projected 2024 - 2033 Change` = `2024 - 2033 % Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%")) %>%
+  mutate_if(is.numeric,floor) %>%
+  mutate(`Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=","))))  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(`Avg. Annual Earnings`)) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r regions` Growth Occupations Requiring High School Diploma or Less 
+
+```{r region occ growth hs, fig.width=10, fig.height=8, dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("R - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("High school diploma or equivalent","No formal educational credential"))   %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+  #filter(rank <= 10) %>%
+  #arrange(rank)  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  select(-contains("...")) %>% 
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r regions` Growth Occupations Requiring Some College, Associate's Degree, or Nondegree Award
+
+```{r region growth occ some college, fig.width=10, fig.height=8, dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("R - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("Some college, no degree","Associate's degree",
+                                                "Postsecondary nondegree award"))   %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+ # filter(rank <= 10) %>%
+  #arrange(rank)  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+---
+
+## Top `r regions` Growth Occupations Requiring Bachelor's Degree or Higher 
+
+```{r region occ bachelors plus, fig.width=10, fig.height=8, dev.args=list(bg="transparent") }
+df_lightcast %>%
+  pluck("R - growth occ") %>%
+  rename(`Projected 2024 - 2033 Change` = `2024 - 2033\r\n% Change`,
+         `Projected 2033 Jobs` = `2033 Jobs`) %>%
+  mutate(`Projected 2024 - 2033 Change` = paste0(round(100 * as.numeric(`Projected 2024 - 2033 Change`),1),"%"),
+         `Avg. Earnings Per Job` = case_when(`Avg. Annual Earnings` != "Insf. Data" ~ paste0("\\$",format(round(as.numeric(`Avg. Annual Earnings`)),big.mark=",")))) %>%
+  filter(`Typical Entry Level Education` %in% c("Bachelor's degree",
+                                                "Master's degree",
+                                                "Doctoral or professional degree"))  %>%
+  filter(`Projected 2033 Jobs` != "Insf. Data") %>%
+  mutate("rank"=dense_rank(-as.numeric(`2024 - 2033 Change`))) %>%
+ # filter(rank <= 10) %>%
+  #arrange(rank)  %>%
+  mutate_if(is.numeric, as.integer) %>%
+  select(-c(rank)) %>%
+  select(-c(`Avg. Annual Earnings`,`Typical Entry Level Education`)) %>%
+  kable(format.args=list(big.mark=","),align=c("l","l","r","r","r","r","r","r","r","r","r","r","r","r","r","r","r"))
+```
+
+
+---
+
+# Questions?
+
