@@ -1,6 +1,5 @@
 #' @name load_dependencies
 #' @export
-#' loads depdencies if missing
 
 ## Load or install packages
 packages <- function(x) {

@@ -1,7 +1,6 @@
 #' @name acs_comprehensive
 #' @export
-#' Gets basic ACS data for a given county
-
+#'
 acs_comprehensive <- function(geography="county",
                                   adg_path=Sys.getenv("ADG_KEY"),
                                   counties=c("Clarke","Oconee"),state=13,
