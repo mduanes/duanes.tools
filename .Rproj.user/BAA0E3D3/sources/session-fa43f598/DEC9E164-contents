@@ -41,7 +41,8 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
     left_join(geometry,by=c("joinfield"="GEOID")) %>%
     st_as_sf()
   colnames(output)[pos] <- joinfield
-  output
+  output %>%
+    st_as_sf()
   }
     # county name method
   } else if (method == "Name") {
@@ -76,7 +77,8 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
       left_join(geometry,by=c("joinfield"="NAME")) %>%
       st_as_sf()
     colnames(output)[pos] <- joinfield
-    output
+    output %>%
+      st_as_sf()
 
   } else {
     print("Unrecognized method. Avalible methods: GEOID, Name")
