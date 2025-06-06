@@ -37,8 +37,18 @@ pull_projections <- function(vintage=2025,
     # rename 2024 POP
     if (as.character(vintage) == "2025") {
       read_delim(full_path) %>%
+        filter(BOUND=="POP_M") %>%
         group_by(pick(chars)) %>%
         summarize(POP=sum(TOTAL_POP)) %>%
+        ungroup() %>%
+        # filter for only wanted years
+        filter(YEAR %in% years) %>%
+        mutate("VINTAGE"=vintage)
+    } else if (as.character(vintage) == "2023") {
+      read_delim(full_path) %>%
+        filter(BOUNDS=="Mean") %>%
+        group_by(pick(chars)) %>%
+        summarize(POP=sum(POP)) %>%
         ungroup() %>%
         # filter for only wanted years
         filter(YEAR %in% years) %>%
