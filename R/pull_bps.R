@@ -1,0 +1,122 @@
+#' @name pull_bps
+#' @export
+#'
+#'
+
+pull_bps <- function(minyear=2024,
+                     maxyear=2025,
+                     st=13) {
+ maxmonth <- str_pad(month(Sys.Date())-2,2,"left","0")
+  minyear <- str_trunc(minyear,2,"left","")
+  maxyear <- str_trunc(maxyear,2,"left","")
+
+  # set years
+  years <- seq(minyear,maxyear,1) %>%
+    str_pad(2,"left","0")
+
+  # run loop to load in data
+  for (year in 1:length(years)) {
+
+    # set months
+    months <- seq(1,12,1) %>%
+      str_pad(2,"left","0")
+
+    # truncate to most recent data for last year
+    if (year == length(years)) {
+      months <- months[1:maxmonth]
+    }
+
+    for(month in 1:length(months)) {
+      df_loop <- read_delim(paste0("https://www2.census.gov/econ/bps/County/co",years[year],months[month],"c.txt"),
+                            col_names=c("SURVEY_DATE",
+                                        "STATE_FIPS",
+                                        "COUNTY_FIPS",
+                                        "REGION_CODE",
+                                        "DIVISION_CODE",
+                                        "COUNTY",
+                                        "1UNIT_BLDGS_I",
+                                        "1UNIT_UNITS_I",
+                                        "1UNIT_VALUE_I",
+                                        "2UNIT_BLDGS_I",
+                                        "2UNIT_UNITS_I",
+                                        "2UNIT_VALUE_I",
+                                        "34UNIT_BLDGS_I",
+                                        "34UNIT_UNITS_I",
+                                        "34UNIT_VALUE_I",
+                                        "5PLUSUNIT_BLDGS_I",
+                                        "5PLUSUNIT_UNITS_I",
+                                        "5PLUSUNIT_VALUE_I",
+                                        "1UNIT_BLDGS_R",
+                                        "1UNIT_UNITS_R",
+                                        "1UNIT_VALUE_R",
+                                        "2UNIT_BLDGS_R",
+                                        "2UNIT_UNITS_R",
+                                        "2UNIT_VALUE_R",
+                                        "34UNIT_BLDGS_R",
+                                        "34UNIT_UNITS_R",
+                                        "34UNIT_VALUE_R",
+                                        "5PLUSUNIT_BLDGS_R",
+                                        "5PLUSUNIT_UNITS_R",
+                                        "5PLUSUNIT_VALUE_R"),
+                            delim=",",
+                            skip=2,
+                            col_types="ccccccnnnnnnnnnnnnnnnnnnnnnnnnnn") %>%
+        mutate("YEAR"=years[year],
+               "MONTH"=months[month])
+
+      # append to annual file
+      if (month == 1) {
+        df_annual <- df_loop
+      }
+      if (month > 1) {
+        df_annual <- df_annual %>%
+          rbind(df_loop)
+      }
+    }
+
+    # append annual file to running file for all years
+    if (year == 1) {
+      df <- df_annual
+    }
+    if (year > 1) {
+      df <- df %>%
+        rbind(df_annual)
+    }
+  }
+
+  # CLEAN DATA ----
+
+  # turn into long format with 3 columns: buildings, units, & value
+  datacols <- colnames(df)
+  datacols <- datacols[-c(1:6,31,32)]
+
+  # begin cleaning
+  out <- df %>%
+    # drop necessary cols
+    select(-REGION_CODE,
+           -SURVEY_DATE,
+           -DIVISION_CODE) %>%
+    # pivot longer
+    pivot_longer(cols=datacols) %>%
+    # set unit count cateogry
+    mutate("type"=case_when(str_detect(name,"1UNIT_")~"1 Unit",
+                            str_detect(name,"2UNIT_")~"2 Units",
+                            str_detect(name,"34UNIT_")~"3-4 Units",
+                            str_detect(name,"5PLUSUNIT_")~"5+ Units"),
+           # set variable type
+           "var_type"=case_when(str_detect(name,"UNITS")~"units",
+                                str_detect(name,"BLDG")~"buildings",
+                                str_detect(name,"VALUE")~"value"),
+           # set if reported of imputed
+           "method"=case_when(str_detect(name,"_I")~"Estimates with Imputation",
+                              str_detect(name,"_R")~"Reported Only")) %>%
+    # sum by all categories and drop name var
+    group_by(STATE_FIPS,COUNTY_FIPS,COUNTY,YEAR,MONTH,type,method,var_type) %>%
+    # clean years and month
+    mutate("YEAR"=paste0("20",YEAR),
+           "DATE"=paste0(MONTH,"/",YEAR),
+           # trim county
+           COUNTY=str_remove(str_trim(COUNTY,"right")," County"))
+    out %>%
+      filter(STATE_FIPS==str_pad(st,2,"left","0"))
+}
