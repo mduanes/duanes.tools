@@ -3,6 +3,7 @@
 export(acs_comprehensive)
 export(choropleth)
 export(cty_dim)
+export(graph)
 export(install_adg_key)
 export(join_geometries)
 export(load_dependencies)
