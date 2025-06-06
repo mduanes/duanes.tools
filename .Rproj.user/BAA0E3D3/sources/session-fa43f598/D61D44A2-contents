@@ -1,0 +1,59 @@
+#' @name acs_comprehensive
+#' @export
+#' Gets basic ACS data for a given county by time series
+#'
+#'
+#'
+get_acs_time_series <- function(geography="county",
+                                adg_path=Sys.getenv("ADG_KEY"),
+                                counties=c("Clarke","Oconee"),state=13,
+                                specify_vars = FALSE,
+                                y=y_acs,
+                                specified_vars = NULL) {
+
+  if (specify_vars == TRUE) {
+    # load metadata
+    metadata <- load_variables(y_acs,"acs5") %>%
+      filter(name %in% specified_vars)
+
+    vars <- metadata$name
+
+    colnames(metadata) <- c("variable","var_name","description","geography")
+    # if not specified, use general list
+  } else if(Sys.getenv("ADG_KEY") == "") {
+    print("No ADG Path! Set using install_adg_key()")
+  } else {
+
+    metadata <- read_tsv(paste0(adg_path,"Data/ACS Metadata/acs_vars_metadata_long_2024.txt")) %>%
+      # specify some specific variable groups
+      mutate(var_group=case_when(var_name=="Rent50pct"~"Rent50",
+                                 var_name=="Own50pct"~"Own50",
+                                 TRUE~var_group))
+
+    # pull out variables and specify desired vars
+    vars <- metadata$variable
+    vars <- c(vars, "B17001_001",
+              "B17001_004","B17001_005","B17001_006","B17001_007","B17001_008","B17001_009","B17001_015","B17001_016",
+              "B17001_018","B17001_019","B17001_020","B17001_021","B17001_022","B17001_023","B17001_029","B17001_030")
+  }
+
+  # set years for time series
+  years <- c(y_acs-9,y_acs-4,y_acs)
+
+  # run for each year
+
+  for (i in years) {
+    output_loop <- acs_comprehensive(y = i) %>%
+      mutate("year"=i)
+
+    if (i == years[1]) {
+      output <- output_loop
+    } else {
+      output <- output %>%
+        rbind(output_loop)
+    }
+  }
+  output %>%
+    left_join(metadata)
+}
+
