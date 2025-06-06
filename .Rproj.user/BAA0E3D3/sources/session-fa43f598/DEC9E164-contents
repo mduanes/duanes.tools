@@ -3,6 +3,7 @@
 #'
 #'
 # function to automatically join the relevant geometries from tigris
+
 library(tigris)
 library(sf)
 library(dplyr)
@@ -34,10 +35,12 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
   }
 
   # join data and geometry and convert to simple features
+  pos <- match(colnames(data),joinfield)[!is.na(match(colnames(data),joinfield))]
   output <- data %>%
-    left_join(geometry,by=c(joinfield="GEOID")) %>%
+    rename("joinfield"=joinfield) %>%
+    left_join(geometry,by=c("joinfield"="GEOID")) %>%
     st_as_sf()
-
+  colnames(output)[pos] <- joinfield
   output
   }
     # county name method
@@ -67,10 +70,12 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
       print("Unrecognized Name Format. Recognized formats: NAME; NAME County; NAME County, STATE")
     }
     # join data and geometry and convert to simple features
+    pos <- match(colnames(data),joinfield)[!is.na(match(colnames(data),joinfield))]
     output <- data %>%
-      left_join(geometry,by=c(joinfield="NAME")) %>%
+      rename("joinfield"=joinfield) %>%
+      left_join(geometry,by=c("joinfield"="NAME")) %>%
       st_as_sf()
-
+    colnames(output)[pos] <- joinfield
     output
 
   } else {
