@@ -4,7 +4,7 @@
 #'
 #'
 #'
-theme_minimal() +
+theme_adg <- theme_minimal() +
   theme(axis.text = element_text(size=default_axis_text_size),
         axis.title = element_text(size=default_axis_text_size,face = "bold"),
         legend.text = element_text(size=default_axis_text_size*0.75),
