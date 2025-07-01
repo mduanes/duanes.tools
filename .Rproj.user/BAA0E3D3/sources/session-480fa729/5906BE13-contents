@@ -4,7 +4,8 @@
 #'
 #'
 #'
-theme_adg_map <- theme_minimal() +
+theme_adg_map <- function() {
+  theme_minimal() +
   theme(axis.text = element_blank(),
         plot.background = element_rect(fill="white",linewidth = 0),
         panel.grid = element_blank(),
@@ -12,3 +13,4 @@ theme_adg_map <- theme_minimal() +
         legend.title = element_text(size=default_axis_text_size,face="bold"),
         plot.caption = element_text(size=0.6*default_axis_text_size,face="italic",
                                     hjust=0.5))
+}
