@@ -23,6 +23,7 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
                   legend_rows = 2,
                   line_width = default_line_width, point_size=default_point_size,
                   label_color=default_label_color,
+                  label_size=default_axis_text_size/3,
                   caption = NULL,axis_text_size=default_axis_text_size) {
 
   # set group aesthetic and x/y labels to defaults if not specified in function call
@@ -110,7 +111,7 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
       geom_text(mapping=aes(label=format(.data[[label]],digits=2)),
                 fontface="bold",color=label_color,
                 position=position_stack(vjust=0.5),
-                size=default_axis_text_size/3)
+                size=label_size)
   }
 
   # add axis comma/pct formatting if specified
