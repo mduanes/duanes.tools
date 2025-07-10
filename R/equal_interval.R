@@ -5,11 +5,12 @@ library(tidyverse)
 
 equal_interval <- function(data,field,n,forcezero=TRUE) {
   field_fun <- data %>%
-    pull(field)
+    pull(field) %>%
+    as.numeric()
 
-  step_size <- (max(field_fun) - min(field_fun))/n
+  step_size <- (max(field_fun,na.rm = TRUE) - min(field_fun,na.rm = TRUE))/n
   magnitude <- as.numeric(paste0(1,paste0(rep(0,nchar(round(step_size))-1),collapse="")))
-  classes <- plyr::round_any(seq(min(field_fun),max(field_fun),step_size),magnitude)
+  classes <- plyr::round_any(seq(min(field_fun,na.rm = TRUE),max(field_fun,na.rm = TRUE),step_size),magnitude)
 
     if(forcezero==TRUE) {
     for(i in 1:length(classes)) {
