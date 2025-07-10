@@ -3,6 +3,7 @@
 export(acs_comprehensive)
 export(choropleth)
 export(cty_dim)
+export(equal_interval)
 export(graph)
 export(install_adg_key)
 export(join_geometries)
