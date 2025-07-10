@@ -40,7 +40,7 @@ concepts <- c("B25003", # tenure and tenure by race
 acs_vars_codes <- load_variables(year_acs,"acs5") %>%
   mutate("group"=str_trunc(name,6,"right","")) %>%
   filter(group %in% concepts) %>%
-  pull(name)
+  pull(name) 
 
 # DATA PULLS -----                       
 
@@ -449,3 +449,4 @@ dimensions <- readxl::read_xlsx("r data/CountyDimensions12_6_2023.xlsx") %>%
                                          TRUE~0))
 
 writexl::write_xlsx(dimensions,"r data/Dimensions_FS.xlsx")
+
