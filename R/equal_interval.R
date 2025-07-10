@@ -10,7 +10,10 @@ equal_interval <- function(data,field,n,forcezero=TRUE) {
   options(scipen = 999)
   step_size <- (max(field_fun,na.rm = TRUE) - min(field_fun,na.rm = TRUE))/n
   magnitude <- as.numeric(paste0(1,paste0(rep(0,nchar(round(step_size))-1),collapse="")))
-  classes <- plyr::round_any(seq(min(field_fun,na.rm = TRUE),max(field_fun,na.rm = TRUE),step_size),magnitude)
+  classes <- seq(plyr::round_any(min(field_fun,na.rm = TRUE),magnitude,floor),
+                 plyr::round_any(max(field_fun,na.rm = TRUE),magnitude,ceiling),
+                 (plyr::round_any(max(field_fun,na.rm = TRUE),magnitude,ceiling)- plyr::round_any(min(field_fun,na.rm = TRUE),magnitude,ceiling))/n) %>%
+    unique()
 
     if(forcezero==TRUE) {
     for(i in 1:length(classes)) {
