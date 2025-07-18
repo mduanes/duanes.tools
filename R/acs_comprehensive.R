@@ -7,6 +7,7 @@ acs_comprehensive <- function(geography="county",
                                   specify_vars = FALSE,
                                   y=y_acs,
                                   specified_vars = NULL,
+                              survey="acs5",
                               time_series=FALSE) {
 
   if (specify_vars == TRUE) {
@@ -86,7 +87,7 @@ acs_comprehensive <- function(geography="county",
                       state = state,
                       variable = vars,
                       year = y,
-                      survey = 'acs5',
+                      survey = survey,
                       geometry = FALSE) %>%
       left_join(metadata,by="variable",relationship = "many-to-many")
   } else {
@@ -97,7 +98,7 @@ acs_comprehensive <- function(geography="county",
                           state = s,
                           variable = vars,
                           year = y,
-                          survey = 'acs5',
+                          survey = survey,
                           geometry = FALSE) %>%
         left_join(metadata,by="variable",relationship = "many-to-many")
 
