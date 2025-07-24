@@ -4,10 +4,15 @@
 library(tidyverse)
 library(BAMMtools)
 
-nat_breaks <- function(data,field,n,forcezero=TRUE) {
+nat_breaks <- function(data,field,n,forcezero=TRUE,round=TRUE) {
     field_fun <- data %>%
       pull(field)
     classes <- BAMMtools::getJenksBreaks(field_fun,n)
+    if(round==TRUE) {
+      magnitude <- as.numeric(paste0(1,paste0(rep(0,nchar(round(classes[2]))-1),collapse="")))
+      classes <- plyr::round_any(classes,magnitude,floor)
+
+    }
     if(forcezero==TRUE) {
       for(i in 1:length(classes)) {
         if(classes[i] < 0 & classes[i+1] >= 0) {
