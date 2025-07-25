@@ -9,7 +9,7 @@ nat_breaks <- function(data,field,n,forcezero=TRUE,round=TRUE) {
       pull(field)
     classes <- BAMMtools::getJenksBreaks(field_fun,n)
     if(round==TRUE) {
-      magnitude <- as.numeric(paste0(1,paste0(rep(0,nchar(round(classes[2]))-1),collapse="")))
+      magnitude <- as.numeric(paste0(1,paste0(rep(0,(nchar(round(classes[2]))-1)),collapse="")))
       classes <- plyr::round_any(classes,magnitude,floor)
 
     }
