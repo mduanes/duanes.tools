@@ -2,14 +2,16 @@
 source("scripts/setup.R")
 
 # SETTINGS FOR SCRIPT ----
-geo_level <- "county" # level of geography to fetch data for
-acs_path <- "powerbi data/acs_housing_data.csv"
-bps_path <- "powerbi data/bps_data_latest.csv"
+geo_level <- "state" # level of geography to fetch data for
+acs_path <- "powerbi data/acs_housing_data_state.csv"
+#bps_path <- "powerbi data/bps_data_latest.csv"
 fort_stewart_ctys <- c("Bryan", "Bulloch", "Chatham", "Effingham",
                        "Evans", "Liberty", "Long", "Tattnall") # counties in the fort stewart "region"
 counties_all <- counties(state="GA") %>% # list of all counties in GA
   pull(COUNTYFP)
-st <- 13
+st <- states() %>% # list of all counties in GA
+  pull(STATEFP)
+#st <- 13
 
 year_acs <- 2023
 years <- c(year_acs, year_acs-5, year_acs-10)
@@ -62,98 +64,6 @@ get_acs(geography=geo_level,
   data.table::rbindlist()
 # median housing cost from realtor.com; need to consider inflation if using time series
 
-# CENSUS BPS -----
-#if(!exists("df_bps")) {
-# CONFIG -----
-minyear <- 2000
-maxyear <- 2025
-maxmonth <- as.numeric(month(Sys.Date())) - 1
-if(maxmonth == 0) {
-  maxmonth <- 1
-}
-# SCRIPTS ----
-
-minyear <- str_trunc(minyear,2,"left","")
-maxyear <- str_trunc(maxyear,2,"left","")
-
-# set years
-years <- seq(minyear,maxyear,1) %>%
-  str_pad(2,"left","0")
-
-print("Loading BPS data....")
-# run loop to load in data
-for (year in years) {
-
-  # truncate to most recent data for last year
-  if (year == years[length(years)]) {
-    months <- seq(1,maxmonth,1) %>%
-      str_pad(2,"left","0")
-  } else {
-    # set months
-    months <- seq(1,12,1) %>%
-      str_pad(2,"left","0")
-  }
-  
-  for(month in months) {
-    
-    print(paste0(month,",", year))
-    
-    df_loop <- read_delim(paste0("https://www2.census.gov/econ/bps/County/co",year,month,"c.txt"),
-                          col_names=c("SURVEY_DATE",
-                                      "STATE_FIPS",
-                                      "COUNTY_FIPS",
-                                      "REGION_CODE",
-                                      "DIVISION_CODE",
-                                      "COUNTY",
-                                      "1UNIT_BLDGS_I",
-                                      "1UNIT_UNITS_I",
-                                      "1UNIT_VALUE_I",
-                                      "2UNIT_BLDGS_I",
-                                      "2UNIT_UNITS_I",
-                                      "2UNIT_VALUE_I",
-                                      "34UNIT_BLDGS_I",
-                                      "34UNIT_UNITS_I",
-                                      "34UNIT_VALUE_I",
-                                      "5PLUSUNIT_BLDGS_I",
-                                      "5PLUSUNIT_UNITS_I",
-                                      "5PLUSUNIT_VALUE_I",
-                                      "1UNIT_BLDGS_R",
-                                      "1UNIT_UNITS_R",
-                                      "1UNIT_VALUE_R",
-                                      "2UNIT_BLDGS_R",
-                                      "2UNIT_UNITS_R",
-                                      "2UNIT_VALUE_R",
-                                      "34UNIT_BLDGS_R",
-                                      "34UNIT_UNITS_R",
-                                      "34UNIT_VALUE_R",
-                                      "5PLUSUNIT_BLDGS_R",
-                                      "5PLUSUNIT_UNITS_R",
-                                      "5PLUSUNIT_VALUE_R"),
-                          delim=",",
-                          skip=2,
-                          col_types="ccccccnnnnnnnnnnnnnnnnnnnnnnnnnn") %>%
-      mutate("YEAR"=year,
-             "MONTH"=month)
-    
-    # append to annual file
-    if (month == "01") {
-      df_annual <- df_loop
-    } else {
-      df_annual <- df_annual %>%
-        rbind(df_loop)
-    }
-  }
-  
-  # append annual file to running file for all years
-  if (year == "01") {
-    df_bps <- df_annual
-  } else {
-    df_bps <- df_bps %>%
-      rbind(df_annual)
-  }
-}
-#}
-
 # TOTAL HOUSING UNITS ----
 if (geo_level == "county") {
 hous19 <- get_estimates(year=2019,
@@ -201,7 +111,7 @@ for(file in rent50files) {
     select(fips,rent501,rent502,rent503,rent504) %>%
     mutate(fips=str_remove(fips,"99999"),
            year=year) %>%
-    filter(fips %in% gafips) %>%
+    #filter(fips %in% gafips) %>%
     pivot_longer(rent501:rent504) %>%
     mutate(bedrooms=str_remove(name,"rent50")) %>%
     mutate("var"="Median Rent")
@@ -213,7 +123,8 @@ for(file in rent50files) {
       rbind(file_loop)
   }
 }
-
+hud_med_rent <- hud_med_rent %>%
+  mutate(statecode=str_trunc(fips,2,"right",""))
 
 # HUD FAIR MARKET RENT ----
 fmrfiles <- list.files("r data/hud/fmr")[str_detect(list.files("r data/hud/fmr"),".xlsx")]
@@ -231,7 +142,7 @@ for(file in fmrfiles) {
   file_loop <- file_loop %>%
     mutate(fips=str_remove(fips,"99999"),
            year=year) %>%
-    filter(fips %in% gafips) %>%
+    #filter(fips %in% gafips) %>%
     pivot_longer(fmr1:fmr4) %>%
     mutate(bedrooms=str_remove(name,"fmr")) %>%
     mutate("var"="Fair Market Rent")
@@ -243,7 +154,8 @@ for(file in fmrfiles) {
       rbind(file_loop)
   }
 }
-
+hud_fmr <- hud_fmr %>%
+  mutate(statecode=str_trunc(fips,2,"right",""))
 # DATA CLEANUP ----
 
 # ACS ----
@@ -359,73 +271,31 @@ df_acs_data <- acs_data_raw %>%
 
 #
 
-# BPS ----
-#if(!exists("df_bps")) {
-# turn into long format with 3 columns: buildings, units, & value
-datacols <- colnames(df_bps)
-datacols <- datacols[-c(1:6,31,32)]
-
-# begin cleaning
-df_bps <- df_bps %>%
-  # drop necessary cols
-  select(-REGION_CODE,
-         -SURVEY_DATE,
-         -DIVISION_CODE) %>%
-  # pivot longer
-  pivot_longer(cols=datacols) %>%
-  # set unit count cateogry
-  mutate("type"=case_when(str_detect(name,"1UNIT_")~"1 Unit",
-                          str_detect(name,"2UNIT_")~"2 Units",
-                          str_detect(name,"34UNIT_")~"3-4 Units",
-                          str_detect(name,"5PLUSUNIT_")~"5+ Units"),
-         # set variable type
-         "var_type"=case_when(str_detect(name,"UNITS")~"units",
-                              str_detect(name,"BLDG")~"buildings",
-                              str_detect(name,"VALUE")~"value"),
-         # set if reported of imputed
-         "method"=case_when(str_detect(name,"_I")~"Estimates with Imputation",
-                            str_detect(name,"_R")~"Reported Only")) %>%
-  # sum by all categories and drop name var
-  group_by(STATE_FIPS,COUNTY_FIPS,COUNTY,YEAR,MONTH,type,method,var_type) %>%
-  summarize(value=sum(value)) %>%
-  ungroup() %>%
-  # pivot key values out
-  pivot_wider(names_from = var_type,values_from=value) %>%
-  # clean years and month
-  mutate("YEAR"=paste0("20",YEAR),
-         "DATE"=paste0(MONTH,"/",YEAR),
-         # trim county
-         COUNTY=str_remove(str_trim(COUNTY,"right")," County"))
-
-df_bps <- df_bps %>%
-  filter(STATE_FIPS == "13")
-#}
-
 # HOUSEHOLDS V UNITS ----
-for (y in c(2010:year_acs)) {
-  hh_unit_loop <- get_acs(geography="county",
-                          variable="S2502_C01_001",
-                        year=y,
-                        st="GA",
-                        county = counties_all,
-                        survey="acs5") %>%
-    mutate(YEAR=y)
-  
-  if(y==2010) {
-    hh_unit <- hh_unit_loop
-  } else {
-    hh_unit <- hh_unit %>%
-      rbind(hh_unit_loop)
-  }
-}
-
-df_hh_unit <- hh_unit %>%
-  mutate(YEAR=as.character(YEAR),
-         NAME=str_remove(NAME," County, Georgia")) %>%
-  left_join(df_hous,by=c("NAME","YEAR")) %>%
-  select(-variable,-moe) %>%
-  rename("households"=estimate,
-         "units"=value)
+# for (y in c(2010:year_acs)) {
+#   hh_unit_loop <- get_acs(geography="county",
+#                           variable="S2502_C01_001",
+#                         year=y,
+#                         st="GA",
+#                         county = counties_all,
+#                         survey="acs5") %>%
+#     mutate(YEAR=y)
+#   
+#   if(y==2010) {
+#     hh_unit <- hh_unit_loop
+#   } else {
+#     hh_unit <- hh_unit %>%
+#       rbind(hh_unit_loop)
+#   }
+# }
+# 
+# df_hh_unit <- hh_unit %>%
+#   mutate(YEAR=as.character(YEAR),
+#          NAME=str_remove(NAME," County, Georgia")) %>%
+#   left_join(df_hous,by=c("NAME","YEAR")) %>%
+#   select(-variable,-moe) %>%
+#   rename("households"=estimate,
+#          "units"=value)
 
 # TOTAL HOUSING UNITS ----
 
@@ -435,10 +305,14 @@ df_hous <- hous19 %>%
 
 # SAVE DATA -----
 write_csv(df_acs_data,acs_path)
-write_csv(df_bps,bps_path)
+#write_csv(df_bps,bps_path)
 #write_csv(df_rdc,"data/realtor_latest.csv")
+state_names <- tigris::states()  %>% data.frame() %>% select(NAME,STATEFP)
 hud_med_rent %>%
-  rbind(hud_fmr) %>%
+  rbind(hud_fmr %>% select(colnames(hud_med_rent))) %>%
+  left_join(state_names,
+            by=c("statecode"="STATEFP")) %>%
+  rename("State"=NAME) %>%
   write_csv("powerbi data/hud_rent.csv")
 write_csv(df_hous,"powerbi data/housing_units_1023.csv")
 write_csv(df_hh_unit,"powerbi data/households_v_units.csv")
