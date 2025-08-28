@@ -9,7 +9,7 @@ manual_breaks <- function(data,field,breaks=c(), round=TRUE) {
     pull(field)
   classes <- breaks
 
-  for(i in 1:n) {
+  for(i in 1:length(breaks)) {
     if (i == 1) {
       class_lab <- paste0(format(classes[i],big.mark=","), "-", format(classes[i+1]-1,big.mark=","))
       order <- class_lab
