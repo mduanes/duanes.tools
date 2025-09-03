@@ -1,7 +1,5 @@
 #' @name inflation_adjust
 #' @export
-#'
-#'  adjust for inflation using cpi all items urban consumers
 
 inflation_adjust_cpiu <- function(data,field,yearfield,
                                   year_adj=year(Sys.Date())) {
