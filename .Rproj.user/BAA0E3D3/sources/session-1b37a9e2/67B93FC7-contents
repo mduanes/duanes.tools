@@ -62,15 +62,15 @@ acs_comprehensive <- function(geography="county",
             left_join(metadata,by="variable",relationship = "many-to-many") %>%
             mutate("SERIES"=paste0(y-4,"-",y))
         if (y == years[1]) {
-          output <- output_loop
+          output_cty <- output_loop
         } else {
-          output <- output %>%
+          output_cty <- output_cty %>%
             rbind(output_loop)
         }
       }
       # non time series
     } else {
-        output <- get_acs(geography = geography,
+        output_cty <- get_acs(geography = geography,
                           county = cty_fip,
                           state = state_fip,
                           variable = vars,
@@ -79,6 +79,12 @@ acs_comprehensive <- function(geography="county",
                           geometry = FALSE) %>%
           left_join(metadata,by="variable",relationship = "many-to-many")
 
+    }
+    if (county == counties[1]) {
+      output <- output_cty
+    } else {
+      output <- output %>%
+        rbind(output_cty)
     }
   }
 
