@@ -80,7 +80,6 @@ acs_comprehensive <- function(geography="county",
           left_join(metadata,by="variable",relationship = "many-to-many")
 
     }
-    output
   }
 
   # non multi state method ----
@@ -149,4 +148,5 @@ acs_comprehensive <- function(geography="county",
   }
   output
   }
+  output
 }
