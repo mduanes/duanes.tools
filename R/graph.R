@@ -62,7 +62,9 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
           legend.background = element_rect(fill = "transparent", color = NA),
           axis.ticks.x = element_blank(),
           plot.caption = element_text(size=0.6*axis_text_size,face="italic",
-                                      hjust=0.5))
+                                      hjust=0.5),
+          strip.text = element_text(size=axis_text_size,face="bold"),
+          strip.background = element_blank())
 
   if(tolower(legend_pos) == "bottom") {
     graph <- graph +
