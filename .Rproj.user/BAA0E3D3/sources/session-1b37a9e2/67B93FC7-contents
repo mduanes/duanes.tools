@@ -10,7 +10,7 @@ acs_comprehensive <- function(geography="county",
                               survey="acs5",
                               time_series=FALSE,
                               multi_state=FALSE) {
-  if(multi_state=TRUE) {
+  if(multi_state==TRUE) {
 
     if (specify_vars == TRUE) {
       # load metadata for specific var codes
