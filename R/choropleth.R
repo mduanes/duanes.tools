@@ -35,7 +35,9 @@ choropleth <- function(data, col, pal=default_pal_discrete,
             legend.text = element_text(size=axis_text_size*0.5),
             legend.title = element_text(size=axis_text_size,face="bold"),
             plot.caption = element_text(size=0.6*axis_text_size,face="italic",
-                                        hjust=0.5)) +
+                                        hjust=0.5),
+            strip.text = element_text(size=axis_text_size,face="bold"),
+            strip.background = element_blank()) +
       geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
   } else if(type=="gradient") {
     graph <- ggplot(data,mapping=aes(fill=.data[[col]])) +
@@ -58,7 +60,9 @@ choropleth <- function(data, col, pal=default_pal_discrete,
             legend.text = element_text(size=axis_text_size*0.5),
             legend.title = element_text(size=axis_text_size,face="bold"),
             plot.caption = element_text(size=0.6*axis_text_size,face="italic",
-                                        hjust=0.5)) +
+                                        hjust=0.5),
+            strip.text = element_text(size=axis_text_size,face="bold"),
+            strip.background = element_blank()) +
       geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
 
     if (legend_pct == TRUE) {
