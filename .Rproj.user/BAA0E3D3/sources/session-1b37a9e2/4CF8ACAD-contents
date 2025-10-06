@@ -23,7 +23,7 @@ join_geometries <- function(data,method="GEOID",joinfield="GEOID",st=13) {
       select(GEOID)
     print("Joining County Geometry...")
   } else {
-    geometry <- tracts(state=st,county = ctys) %>%
+    geometry <- us_tracts() %>%
       select(GEOID)
     print("Joining Tract Geometry...")
   }
