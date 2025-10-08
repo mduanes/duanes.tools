@@ -18,7 +18,7 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
                   commas_x = FALSE, commas_y = FALSE,
                   pct_x = FALSE, pct_y = FALSE,
                   label = NULL, legend_pos = "right",
-                  disable_y = FALSE,
+                  disable_y = FALSE,pos=NA,
                   graph_linewidth = default_graph_linewidth,
                   legend_rows = 2,
                   line_width = default_line_width, point_size=default_point_size,
@@ -91,7 +91,18 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
             axis.text = element_text(face="bold"))
   }
 
-  if(tolower(graph_type)=="col") {
+  if(tolower(graph_type)=="col" & pos == "dodge") {
+    graph <- graph +
+      geom_col(linewidth=0,show.legend = show_legend,
+               position = position_dodge()) +
+      theme(panel.grid.major.y = element_blank(),
+            panel.grid.minor.y = element_blank(),
+            panel.grid.major.x = element_blank(),
+            panel.grid.minor.x = element_blank(),
+            axis.text = element_text(face="bold"))
+  }
+
+  if(tolower(graph_type)=="col" & pos != "dodge") {
     graph <- graph +
       geom_col(linewidth=0,show.legend = show_legend) +
       theme(panel.grid.major.y = element_blank(),
@@ -100,7 +111,6 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
             panel.grid.minor.x = element_blank(),
             axis.text = element_text(face="bold"))
   }
-
   # remove legend if specified
   if(show_legend == FALSE) {
     graph <- graph +
