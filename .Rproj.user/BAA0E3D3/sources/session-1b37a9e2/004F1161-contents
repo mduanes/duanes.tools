@@ -12,12 +12,14 @@ get_fips <- function(ctys=c("Clarke","Russell,AL")) {
     dplyr::mutate(state=ifelse(!stringr::str_detect(ctys,","),"GA",stringr::str_trunc(ctys,2,"left","")),
                   ctys=stringr::str_remove(ctys,",.*")) %>%
     dplyr::left_join(state_fips,by=c("state"="STUSPS")) %>%
-    dplyr::select(ctys,STATEFP)
+    dplyr::select(ctys,STATEFP) %>%
+    mutate(cty=tolower(ctys))
 
   # pull county data
   fips <- foreign::read.dbf(paste0(ADG_KEY,"Data/TIGER files/US_county_2023.dbf")) %>%
     dplyr:: select(STATEFP,COUNTYFP,NAME) %>%
-    dplyr::right_join(states,by=c("STATEFP","NAME"="ctys")) %>%
+    mutate(NAMEjoin=tolower(NAME)) %>%
+    dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="ctys")) %>%
     dplyr::mutate("GEOID"=paste0(STATEFP,COUNTYFP)) %>%
     pull(GEOID)
 
