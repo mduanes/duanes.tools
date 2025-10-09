@@ -10,6 +10,11 @@ us_zips <- function() {
     mutate(PREFIX=str_trunc(GEOID20,3,"right",""))
   crosswalk <- readxl::read_xlsx(paste0(ADG_KEY,"Data/Geometry Crosswalks/zip_state_crosswalk.xlsx")) %>%
     mutate(Prefix=str_pad(Prefix,3,"left","0"))
+  st <- us_states() %>%
+    data.frame() %>%
+    select(STATEFP,STUSPS)
   zips %>%
-    left_join(crosswalk,by=c("PREFIX"="Prefix"))
+    left_join(crosswalk,by=c("PREFIX"="Prefix")) %>%
+    left_join(st,by=c("State"="STUSPS"))
+
 }
