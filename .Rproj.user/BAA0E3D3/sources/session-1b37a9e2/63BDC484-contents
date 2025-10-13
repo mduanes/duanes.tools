@@ -47,8 +47,8 @@ graph <- function(data, x, y, graph_type = "line", groups=NULL,
                                    fill=.data[[groups]],
                                    group=.data[[groups]])) +
     # add basic aesthetic settings
-    scale_color_manual(values=pal,name=legend_lab) +
-    scale_fill_manual(values=pal,name=legend_lab) +
+    scale_color_manual(values=pal,name=legend_lab,drop=FALSE) +
+    scale_fill_manual(values=pal,name=legend_lab,drop=FALSE) +
     theme_bw() +
     labs(title=title,x=x_lab,y=y_lab,caption=caption) +
     theme(axis.text = element_text(size=axis_text_size),

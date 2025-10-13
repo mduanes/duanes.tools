@@ -26,7 +26,7 @@ choropleth <- function(data, col, pal=default_pal_discrete,
   if(type=="discrete") {
     graph <- ggplot(data,mapping=aes(fill=.data[[col]])) +
       # add basic aesthetic settings
-      scale_fill_manual(values=pal,name=legend_lab) +
+      scale_fill_manual(values=pal,name=legend_lab,drop=FALSE) +
       theme_minimal() +
       labs(title=title,caption=caption)  +
       theme(axis.text = element_blank(),
