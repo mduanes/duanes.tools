@@ -16,7 +16,7 @@ packages <- function(x) {
 }
 
 # packages(openxlsx)  # for reading/writing files as Excel workbooks'
-library(ggnewscale)
+#library(ggnewscale)
 packages(tidyverse)
 packages(tmap)
 packages(tidycensus)
