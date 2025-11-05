@@ -91,7 +91,7 @@ choropleth <- function(data, col, pal=default_pal_discrete,
   }
   if(!is.na(label)) {
     graph <- graph +
-      geom_sf_text(aes(label=label),size=label_size,fontface="bold") +
+      geom_sf_text(aes(label=.data[[label]]),size=label_size,fontface="bold") +
       labs(x="",y="")
   }
   graph
