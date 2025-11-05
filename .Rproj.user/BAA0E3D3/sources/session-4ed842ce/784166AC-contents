@@ -19,7 +19,7 @@ choropleth <- function(data, col, pal=default_pal_discrete,
                        type="discrete",
                        caption=NULL,
                        label=NA,
-                       label_size=15,
+                       label_size=5,
                        axis_text_size=default_axis_text_size,
                        line_width=default_graph_linewidth) {
 
@@ -91,7 +91,7 @@ choropleth <- function(data, col, pal=default_pal_discrete,
   }
   if(!is.na(label)) {
     graph <- graph +
-      geom_sf_text(aes(label=label),size=label_size) +
+      geom_sf_text(aes(label=label),size=label_size,fontface="bold") +
       labs(x="",y="")
   }
   graph
