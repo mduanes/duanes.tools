@@ -43,6 +43,12 @@ nat_breaks <- function(data,field,n,forcezero=TRUE,round=TRUE,class_name="classi
       data_out <- data_out %>%
         mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~classified))
+    } else if (i != n & classes[i]) {
+      class_lab <- paste0(format(classes[i],big.mark=","))
+      order <- c(order,class_lab)
+      data_out <- data_out %>%
+        mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+                                    TRUE~classified))
     } else {
       class_lab <- paste0(format(classes[i],big.mark=","), "+")
       order <- c(order,class_lab)
