@@ -7,7 +7,7 @@
 pull_components <- function(adg_path=Sys.getenv("ADG_KEY"),
                             ctys=NA) {
 
-  if(is.na(ctys)) {
+  if(is.na(ctys[1])) {
     ctys <- us_counties() %>%
       filter(STATEFP=="13") %>%
       pull(NAME)
