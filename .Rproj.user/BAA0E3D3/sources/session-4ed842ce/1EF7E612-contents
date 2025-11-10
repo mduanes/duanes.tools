@@ -17,7 +17,6 @@ pull_components <- function(adg_path=Sys.getenv("ADG_KEY"),
   } else {
 
     # fetch based on vintage
-    print(ctys)
     full_path <- paste0(adg_path,"Data/Census Population Estimates (All Components)/ga_components_of_change_10_24.csv")
 
     # read in base data and summarize by preferences
