@@ -15,7 +15,7 @@ equal_interval <- function(data,
 
  # pull values of field to be classified
   field_fun <- data %>%
-    dplyr::pull(field) %>%
+    pull(field) %>%
     as.numeric()
 
   # find step size of equal interval
@@ -48,9 +48,9 @@ equal_interval <- function(data,
       # classify
       data_out <- data %>%
         # rename classify field to generic name
-        dplyr::rename("field_class"=sym(field)) %>%
+        rename("field_class"=sym(field)) %>%
         # classify
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
       # intermediate levels
     } else if (i != n) {
@@ -60,7 +60,7 @@ equal_interval <- function(data,
       order <- c(order,class_lab)
       # classify
       data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~classified))
     } else {
       # create label
@@ -69,14 +69,14 @@ equal_interval <- function(data,
       order <- c(order,class_lab)
       # classify
       data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i]~class_lab,
                                     TRUE~classified))
     }
   }
 
   # order classes based on order vector
   data_out <- data_out %>%
-    dplyr::mutate(classified=factor(classified,order))
+    mutate(classified=factor(classified,order))
 
   # rename class output field and input field to original name
   colnames(data_out) <- c(colnames(data),class_name)

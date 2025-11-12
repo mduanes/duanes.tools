@@ -2,26 +2,21 @@
 #' @export
 
 
-# get base settings
-source("R/settings.R")
 
 # creates choropleth maps quickly
 # returns a choropleth map of a single variable
-choropleth <- function(data,
-                       col, # column to use as color
-                       pal=default_pal_discrete, # palette
-                       show_legend=FALSE, # show legend or not
-                       itle = NULL, # title of graph
-                       legend_lab = "Legend", # label of legend
-                       legend_pct=FALSE, # include % marker on legend or not (gradient only)
-                       type="discrete", # types: discrete, gradient
-                       caption=NULL, # caption if specified
-                       label=NA, # field to use to label geometries
-                       label_size=5, # size of label
-                       axis_text_size=default_axis_text_size, # base size of non-label text
-                       line_width=default_graph_linewidth # width of lines
-                       ) {
-  # calc midpoint of col field for gradient
+choropleth <- function(data, col, pal=default_pal_discrete,
+                       show_legend=FALSE, title = NULL,
+                       legend_lab = "Legend",
+                       legend_pct=FALSE,
+                       type="discrete",
+                       caption=NULL,
+                       label=NA,
+                       label_size=5,
+                       axis_text_size=default_axis_text_size,
+                       line_width=default_graph_linewidth) {
+  # retrieve settings
+  source("R/settings.R")
   midpoint <- mean(data[[col]])
 
   if(type=="discrete") {

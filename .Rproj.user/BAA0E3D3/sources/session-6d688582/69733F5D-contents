@@ -2,8 +2,6 @@
 #' @export
 
 
-# get base settings
-source("R/settings.R")
 
 # creates choropleth maps quickly
 # returns a choropleth map of a single variable
@@ -21,7 +19,8 @@ choropleth <- function(data,
                        axis_text_size=default_axis_text_size, # base size of non-label text
                        line_width=default_graph_linewidth # width of lines
                        ) {
-  # calc midpoint of col field for gradient
+  # retrieve settings
+  source("R/settings.R")
   midpoint <- mean(data[[col]])
 
   if(type=="discrete") {
