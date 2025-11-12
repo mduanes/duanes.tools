@@ -37,7 +37,6 @@ nat_breaks <- function(data,
     # classify data using breaks ----
   # loop over classes
   for(i in 1:n) {
-
     # special operations for fist class
     if (i == 1) {
       # case when first break is positive
@@ -47,9 +46,9 @@ nat_breaks <- function(data,
       # start order vector
       order <- class_lab
 
-      data_out <- data
+      data_out <- data %>%
       # rename field to generic name
-        dplyr::rename("field_class"=sym(field)) %>%
+      dplyr::rename("field_class"=sym(field)) %>%
           # classify
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
