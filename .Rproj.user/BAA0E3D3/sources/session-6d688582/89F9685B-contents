@@ -1,0 +1,41 @@
+#' @name inflation_adjust
+#' @export
+
+# adjusts a numeric field for inflation using avg. annual CPI-U
+
+inflation_adjust_cpiu <- function(data,
+                                  field, # field to adjust
+                                  yearfield, # field with years in data
+                                  year_adj=year(Sys.Date()) # year to adjust up to
+                                  ) {
+
+  # pull CPI from fred
+  cpi <- fredr::fredr_series_observations("CPIAUCSL",realtime_start=lubridate::as_date("1980-01-01"),realtime_end = as_date(Sys.Date())) %>%
+    # get year
+    dplyr::mutate(year=year(date)) %>%
+    # take average cpi for year
+    dplyr::group_by(year) %>%
+    dplyr::summarize(avg_cpi=mean(value)) %>%
+    dplyr::ungroup() %>%
+    # rename for join
+    dplyr::rename("YEARMATCH"=year)
+
+  # find current CPI
+  curryear_cpi <- cpi %>%
+    dplyr::filter(YEARMATCH==year_adj) %>%
+    dplyr::pull(avg_cpi)
+
+  # join with CPI and adjust for inflation
+  data %>%
+    # standardize field names
+    dplyr::mutate("YEARMATCH"= !!rlang::sym(yearfield),
+           "field"= !!rlang::sym(field)) %>%
+    # join to CPI
+    dplyr::left_join(cpi,by=("YEARMATCH")) %>%
+    # adjust for inflation
+    # value in year x in year y dollars = value in X year in X year dollars * (CPI Y Year/CPI X Year)
+    # also = (Value in X year/CPI X YEAR) * CPI Y Year
+    # curryear = Year Y, year of obseration = year x
+    dplyr::mutate(inflation_adjusted = field * (curryear_cpi-avg_cpi/avg_cpi)) %>%
+    dplyr::select(-c("avg_cpi","field","YEARMATCH"))
+}

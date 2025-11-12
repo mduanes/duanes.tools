@@ -42,7 +42,7 @@ pull_projections <- function(vintage=2025, # vintage to pull
     # handle vintages based on different naming schemes,
     # group by and summarize for desired breakdown characteristics
     if (as.character(vintage) == "2025") {
-      readr::read_delim(full_path) %>%
+      read_delim(full_path) %>%
         dplyr::filter(BOUND=="POP_M") %>%
         dplyr::group_by(pick(chars)) %>%
         dplyr::summarize(POP=sum(TOTAL_POP)) %>%
@@ -51,7 +51,7 @@ pull_projections <- function(vintage=2025, # vintage to pull
         dplyr::filter(YEAR %in% years) %>%
         dplyr::mutate("VINTAGE"=vintage)
     } else if (as.character(vintage) == "2023") {
-      readr::read_delim(full_path) %>%
+      read_delim(full_path) %>%
         dplyr::filter(BOUNDS=="Mean") %>%
         dplyr::group_by(pick(chars)) %>%
         dplyr::summarize(POP=sum(POP)) %>%
@@ -61,7 +61,7 @@ pull_projections <- function(vintage=2025, # vintage to pull
         dplyr::mutate("VINTAGE"=vintage)
     } else {
     # read in base data and summarize by preferences
-      readr::read_delim(full_path) %>%
+    read_delim(full_path) %>%
         dplyr::group_by(pick(chars)) %>%
         dplyr:: summarize(POP=sum(POP)) %>%
         dplyr::ungroup() %>%

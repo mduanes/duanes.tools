@@ -1,8 +1,6 @@
 #' @name us_counties
 #' @export
 
-# pulls us county geoemtries from adg archives rather than tigris
-
 us_counties <- function() {
 
   ADG_KEY <- get_adg_key()

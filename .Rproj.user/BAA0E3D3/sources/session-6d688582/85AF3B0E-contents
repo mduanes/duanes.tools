@@ -27,9 +27,9 @@ manual_breaks <- function(data,
       order <- class_lab
       data_out <- data %>%
         # rename field to be classified to generic name
-        dplyr::rename("field_class"=sym(field)) %>%
+        rename("field_class"=sym(field)) %>%
         # classify
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
       # intermediate classes
     } else if (i != n) {
@@ -39,7 +39,7 @@ manual_breaks <- function(data,
       order <- c(order,class_lab)
       # classify
       data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~classified))
       # final label
     } else {
@@ -49,14 +49,14 @@ manual_breaks <- function(data,
       order <- c(order,class_lab)
       # classify
       data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i]~class_lab,
+        mutate(classified=case_when(field_class >= classes[i]~class_lab,
                                     TRUE~classified))
     }
   }
 
   # order class factor based on order vector
   data_out <- data_out %>%
-    dplyr::mutate(classified=factor(classified,order))
+    mutate(classified=factor(classified,order))
 
   # reset names and properly name class factor
   colnames(data_out) <- c(colnames(data),class_name)

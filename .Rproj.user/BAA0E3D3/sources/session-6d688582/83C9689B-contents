@@ -4,6 +4,9 @@
 #'
 #'
 #'
+#'
+
+# ggplot theme base
 theme_adg_map <- function() {
   theme_minimal() +
   theme(axis.text = element_blank(),

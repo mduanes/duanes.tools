@@ -39,7 +39,7 @@ pull_base <- function(vintage=2024, # vintage of pop base
   }
 
   # read in base data and summarize by preferences
-  readr::read_csv(full_path) %>%
+  read_csv(full_path) %>%
     # group by selected variables and summarize
     dplyr::group_by(pick(chars)) %>%
     dplyr::summarize(POP=sum(POP)) %>%
