@@ -40,10 +40,9 @@ join_geometries <- function(data,
     dplyr::mutate(joinfield=as.character(joinfield)) %>%
     dplyr::left_join(geo) %>%
     #dplyr::select(-joinfield) %>%
-    sf::st_as_sf()
-
-  # reset colnames
-  colnames(output) <- c(colnames(data),"geometry")
+    sf::st_as_sf() %>%
+    # reset names
+    dplyr::rename(field=joinfield)
 
   print("Joined geometries.")
   output
