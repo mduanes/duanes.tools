@@ -8,7 +8,8 @@ nat_breaks <- function(data,
                        n, # number of breaks
                        forcezero=TRUE, # whether or not to force 0 as a break if data crosses 0
                        round=TRUE, # whether to round breaks from algo
-                       class_name="classified" # name of output class field
+                       class_name="classified", # name of output class field
+                       pct=FALSE # add percents or not
                        ) {
 
   # generate and clean breaks ----
@@ -42,7 +43,11 @@ nat_breaks <- function(data,
       # case when first break is positive
       if(classes[i] > 0.01) {
         # make class label
-      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+        if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+        } else {
+        class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+        }
       # start order vector
       order <- class_lab
 
@@ -55,7 +60,11 @@ nat_breaks <- function(data,
       # case when first break is negative
       } else {
         # make class label
+        if (pct == TRUE) {
+          class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","),"%")
+        } else {
         class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","))
+        }
         # start order vector
         order <- class_lab
         data_out <- data %>%
@@ -69,7 +78,11 @@ nat_breaks <- function(data,
       # handle case where two adjacent breaks are identical
     } else if (i != n & classes[i] != classes[i+1]) {
       # make class label
+      if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+      } else {
       class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+      }
       # add to order vector
       order <- c(order,class_lab)
       # classify
@@ -89,7 +102,11 @@ nat_breaks <- function(data,
       # final class break
     } else if (i == n) {
       # make class label
+      if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "%+")
+      } else {
       class_lab <- paste0(format(classes[i],big.mark=","), "+")
+      }
       # finish order vector
       order <- c(order,class_lab)
       # classify

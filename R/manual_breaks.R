@@ -6,7 +6,8 @@
 manual_breaks <- function(data,
                           field, # field to classify
                           breaks=c(), # set of breaks
-                          class_name="classified" # name of output class
+                          class_name="classified", # name of output class
+                          pct = FALSE # include percent markers or not
                           ) {
 
   # get field data
@@ -22,7 +23,11 @@ manual_breaks <- function(data,
     # special code for first class
     if (i == 1) {
       # make class label
+      if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+      } else {
       class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+      }
       # start order vector
       order <- class_lab
       data_out <- data %>%
@@ -34,7 +39,11 @@ manual_breaks <- function(data,
       # intermediate classes
     } else if (i != n) {
       # class label
+      if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+      } else {
       class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+      }
       # add to order vector
       order <- c(order,class_lab)
       # classify
@@ -44,7 +53,11 @@ manual_breaks <- function(data,
       # final label
     } else {
       # class label (X+ instead of X-Y)
+      if (pct == TRUE) {
+        class_lab <- paste0(format(classes[i],big.mark=","), "%+")
+      } else {
       class_lab <- paste0(format(classes[i],big.mark=","), " + ")
+      }
       # add to order vector
       order <- c(order,class_lab)
       # classify
