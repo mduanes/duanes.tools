@@ -27,7 +27,7 @@ choropleth <- function(data,
   # add label if specified
   if(!is.na(label)) {
   data <- data %>%
-    dplyr::rename("graph_lab"=sym(graph_lab))
+    dplyr::rename("graph_lab"=sym(label))
   }
 
   if(type=="discrete") {
