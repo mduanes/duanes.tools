@@ -42,7 +42,7 @@ join_geometries <- function(data,
     #dplyr::select(-joinfield) %>%
     sf::st_as_sf() %>%
     # reset names
-    dplyr::rename(field=joinfield)
+    rename_with(~ str_replace(., "joinfield", field), contains("joinfield"))
 
   print("Joined geometries.")
   output
