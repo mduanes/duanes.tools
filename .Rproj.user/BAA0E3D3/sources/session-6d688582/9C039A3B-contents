@@ -16,7 +16,7 @@ us_zips <- function() {
     dplyr::mutate(Prefix=stringr::str_pad(Prefix,3,"left","0"))
   # get state prefix from state data
   st <- us_states() %>%
-    dplyr::data.frame() %>%
+    data.frame() %>%
     dplyr::select(STATEFP,STUSPS)
   # join and output
   zips %>%
