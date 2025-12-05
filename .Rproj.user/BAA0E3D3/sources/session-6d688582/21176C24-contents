@@ -24,9 +24,9 @@ manual_breaks <- function(data,
     if (i == 1) {
       # make class label
       if (pct == TRUE) {
-        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-0.01,big.mark=","),"%")
       } else {
-      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-0.01,big.mark=","))
       }
       # start order vector
       order <- class_lab
@@ -40,9 +40,9 @@ manual_breaks <- function(data,
     } else if (i != n) {
       # class label
       if (pct == TRUE) {
-        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-0.01,big.mark=","),"%")
       } else {
-      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-0.01,big.mark=","))
       }
       # add to order vector
       order <- c(order,class_lab)
