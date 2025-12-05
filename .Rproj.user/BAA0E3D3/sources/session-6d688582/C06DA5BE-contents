@@ -35,6 +35,7 @@ nat_breaks <- function(data,
       }
     }
 
+  n <- length(classes) # override n if highly clustered
     # classify data using breaks ----
   # loop over classes
   for(i in 1:n) {
@@ -44,9 +45,9 @@ nat_breaks <- function(data,
       if(classes[i] > 0.01) {
         # make class label
         if (pct == TRUE) {
-        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+          class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
         } else {
-        class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
+          class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-0.01,big.mark=","))
         }
       # start order vector
       order <- class_lab
@@ -57,6 +58,7 @@ nat_breaks <- function(data,
           # classify
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
+
       # case when first break is negative
       } else {
         # make class label
@@ -74,31 +76,7 @@ nat_breaks <- function(data,
           dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                       TRUE~NA))
       }
-      # intermediate levels
-      # handle case where two adjacent breaks are identical
-    } else if (i != n & classes[i] != classes[i+1]) {
-      # make class label
-      if (pct == TRUE) {
-        class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
-      } else {
-      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-1,big.mark=","))
-      }
-      # add to order vector
-      order <- c(order,class_lab)
-      # classify
-      data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
-                                    TRUE~classified))
-      # case where two adjacent breaks are not identical
-    } else if (i != n & classes[i]) {
-      # make class label
-      class_lab <- paste0(format(classes[i],big.mark=","))
-      # add to order vector
-      order <- c(order,class_lab)
-      # classify
-      data_out <- data_out %>%
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
-                                    TRUE~classified))
+
       # final class break
     } else if (i == n) {
       # make class label
@@ -113,7 +91,27 @@ nat_breaks <- function(data,
       data_out <- data_out %>%
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i]~class_lab,
                                     TRUE~classified))
+      # intermediate levels
+    # handle case where two adjacent breaks are not identical
+    } else if (i != n & classes[i] != classes[i+1]) {
+    # make class label
+    if (pct == TRUE) {
+      class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-0.01,big.mark=","),"%")
+    } else {
+      class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-0.01,big.mark=","))
     }
+    # add to order vector
+    order <- c(order,class_lab)
+    # classify
+    data_out <- data_out %>%
+      dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
+                                                TRUE~classified))
+    # case where two adjacent breaks are identical
+  } else if (i != n & classes[i] == classes[i+1]) {
+    # skip
+
+  }
+
   }
     # order class factor by order vector
     data_out <- data_out %>%
@@ -124,5 +122,6 @@ nat_breaks <- function(data,
 
     # output data
     data_out
-}
+  }
+
 
