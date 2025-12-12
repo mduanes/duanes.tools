@@ -40,12 +40,12 @@ nat_breaks <- function(data,
   # loop over classes
   for(i in 1:n) {
     # special operations for fist class
-    if (i == 1) {
+    if (i == 1 & classes[i] != classes[i+1]) {
       # case when first break is positive
       if(classes[i] > 0.01) {
         # make class label
         if (pct == TRUE) {
-          class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-1,big.mark=","),"%")
+          class_lab <- paste0(format(classes[i],big.mark=","), "% - ", format(classes[i+1]-0.01,big.mark=","),"%")
         } else {
           class_lab <- paste0(format(classes[i],big.mark=","), " - ", format(classes[i+1]-0.01,big.mark=","))
         }
