@@ -40,7 +40,8 @@ nat_breaks <- function(data,
 
   data_out <- data %>%
     # rename field to generic name
-    dplyr::rename("field_class"=sym(field))
+    dplyr::rename("field_class"=sym(field)) %>%
+    dplyr::mutate("classified"=NA)
 
 
   # loop over classes
