@@ -91,7 +91,6 @@ nat_breaks <- function(data,
         # classify
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                                   TRUE~NA))
-    }
     } else if (i == n) {
       # make class label
       if (pct == TRUE) {
