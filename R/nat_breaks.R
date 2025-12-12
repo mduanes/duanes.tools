@@ -37,6 +37,12 @@ nat_breaks <- function(data,
 
   n <- length(classes) # override n if highly clustered
     # classify data using breaks ----
+
+  data_out <- data %>%
+    # rename field to generic name
+    dplyr::rename("field_class"=sym(field))
+
+
   # loop over classes
   for(i in 1:n) {
     # special operations for fist class
@@ -53,8 +59,6 @@ nat_breaks <- function(data,
       order <- class_lab
 
       data_out <- data %>%
-      # rename field to generic name
-      dplyr::rename("field_class"=sym(field)) %>%
           # classify
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
@@ -77,17 +81,7 @@ nat_breaks <- function(data,
                                       TRUE~NA))
       }
 
-    } else if (i==1) {
-      # make class label
-      if (pct == TRUE) {
-        class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","),"%")
-      } else {
-        class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","))
-      }
-      data_out <- data %>%
-        # rename field to generic name
-        dplyr::rename("field_class"=sym(field))
-    } else if (i == n) {
+      } else if (i == n) {
       # make class label
       if (pct == TRUE) {
         class_lab <- paste0(format(classes[i],big.mark=","), "%+")
