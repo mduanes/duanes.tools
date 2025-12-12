@@ -77,7 +77,6 @@ nat_breaks <- function(data,
                                       TRUE~NA))
       }
 
-      # final class break
     } else if (i==1) {
       # make class label
       if (pct == TRUE) {
@@ -85,12 +84,7 @@ nat_breaks <- function(data,
       } else {
         class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","))
       }
-      data_out <- data %>%
-        # rename field to generic name
-        dplyr::rename("field_class"=sym(field)) %>%
-        # classify
-        dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
-                                                  TRUE~NA))
+      data_out <- data
     } else if (i == n) {
       # make class label
       if (pct == TRUE) {
