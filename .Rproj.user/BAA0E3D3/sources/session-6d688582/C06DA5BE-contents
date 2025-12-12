@@ -34,6 +34,14 @@ nat_breaks <- function(data,
         }
       }
     }
+# clean classes for dupes
+    rm <- rep(FALSE,length(classes))
+    for(c in 1:(length(classes)-1)) {
+      if(classes[c] == classes[c+1]) {
+        rm[c] <- TRUE
+      }
+    }
+    classes <- classes[!rm]
 
   n <- length(classes) # override n if highly clustered
     # classify data using breaks ----
@@ -59,7 +67,7 @@ nat_breaks <- function(data,
       # start order vector
       order <- class_lab
 
-      data_out <- data %>%
+      data_out <- data_out %>%
           # classify
         dplyr::mutate(classified=dplyr::case_when(field_class >= classes[i] & field_class < classes[i+1]~class_lab,
                                     TRUE~NA))
