@@ -84,7 +84,9 @@ nat_breaks <- function(data,
       } else {
         class_lab <- paste0("Less than ",format(classes[i+1],big.mark=","))
       }
-      data_out <- data
+      data_out <- data %>%
+        # rename field to generic name
+        dplyr::rename("field_class"=sym(field))
     } else if (i == n) {
       # make class label
       if (pct == TRUE) {
