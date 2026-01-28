@@ -63,7 +63,7 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
     cty_fip <- str_trunc(county,3,"left","")
     # time series
     if(time_series == TRUE) {
-      years <- c(y_acs-10,y_acs-5,y_acs)
+      years <- c(y-10,y-5,y)
 
       for(y in years) {
           output_loop <- get_acs(geography = geography,
