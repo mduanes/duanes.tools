@@ -33,8 +33,8 @@ get_fips_mutate <- function(data,col="COUNTY" # Georgia counties do not need sta
     dplyr::mutate(NAMEjoin=tolower(NAME)) %>%
     dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="ctys")) %>%
     dplyr::mutate("GEOID"=paste0(STATEFP,COUNTYFP)) %>%
-    dplyr::select(NAME,GEOID)
-  colnames(fips) <- c(col,"GEOID")
-  data %>%
+    dplyr::select(NAME,GEOID) %>%
+    dplyr::distinct()
+
     dplyr::left_join(fips,relationship = "many-to-many")
 }
