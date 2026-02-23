@@ -1,7 +1,0 @@
-st <- 13
-
-get_estimates(geography = "county",
-              state = st,
-              product = "characteristics",
-              year=2022) %>%
-  filter(AGEGROUP==1)
