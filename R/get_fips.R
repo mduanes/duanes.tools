@@ -30,7 +30,7 @@ get_fips <- function(ctys=c("Clarke","Russell,AL") # Georgia counties do not nee
     dplyr::mutate(NAMEjoin=tolower(NAME)) %>%
     dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="ctys")) %>%
     dplyr::mutate("GEOID"=paste0(STATEFP,COUNTYFP)) %>%
-    dplyr::pull(NAME)
+    dplyr::pull(GEOID)
 
   # return list of complete fips
   fips
