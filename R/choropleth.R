@@ -20,11 +20,14 @@ choropleth <- function(data,
                        label_size=5, # size of label
                        axis_text_size=default_axis_text_size, # base size of non-label text
                        line_width=default_graph_linewidth, # width of lines
-                       midpoint=NA
+                       midpoint=NA,
+                       maxpoint=NA,
+                       minpoint=NA
                        ) {
-  # calc midpoint of col field for gradient
+  # calc min max and midpoint of col field for gradient
+  minpoint <- ifelse(!is.na(minpoint),midpoint,min(data[[col]]))
   midpoint <- ifelse(!is.na(midpoint),midpoint,mean(data[[col]]))
-
+  maxpoint <- ifelse(!is.na(maxpoint),midpoint,max(data[[col]]))
   # add label if specified
   if(!is.na(label)) {
   data <- data %>%
@@ -58,10 +61,10 @@ choropleth <- function(data,
                            low=pal[1],name=legend_lab,
                            midpoint=midpoint,
                            labels=scales::comma,
-                           breaks=c(min(data[[col]]),
+                           breaks=c(minpoint,
                                     0,
                                     midpoint,
-                                    max(data[[col]]))) +
+                                    maxpoint)) +
       #guides(fill=guide_legend(ncol=1)) +
       # add basic aesthetic settings
       ggplot2::theme_minimal() +
