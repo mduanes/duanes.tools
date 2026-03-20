@@ -22,7 +22,8 @@ choropleth <- function(data,
                        line_width=default_graph_linewidth, # width of lines
                        midpoint=NA,
                        maxpoint=NA,
-                       minpoint=NA
+                       minpoint=NA,
+                       grad_transform="identity"
                        ) {
   # calc min max and midpoint of col field for gradient
   minpoint <- ifelse(!is.na(minpoint),midpoint,min(data[[col]]))
@@ -58,8 +59,10 @@ choropleth <- function(data,
     graph <- ggplot2::ggplot(data,mapping=aes(fill=.data[[col]])) +
       ggplot2::scale_fill_gradient2(high=pal[5],
                            mid=pal[3],
-                           low=pal[1],name=legend_lab,
+                           low=pal[1],
+                           name=legend_lab,
                            midpoint=midpoint,
+                           transform=grad_transform,
                            labels=scales::comma,
                            breaks=c(minpoint,
                                     0,
