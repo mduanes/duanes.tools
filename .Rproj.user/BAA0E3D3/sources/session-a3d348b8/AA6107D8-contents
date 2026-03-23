@@ -29,6 +29,7 @@ get_fips_mutate <- function(data,col="COUNTY" # Georgia counties do not need sta
 
   # pull county data
   fips <- foreign::read.dbf(paste0(ADG_KEY,"Data/TIGER files/US_county_2023.dbf")) %>%
+    dplyr::filter(STATEFP %in% unique(states$STATEFP)) %>%
     dplyr::select(STATEFP,COUNTYFP,NAME) %>%
     dplyr::mutate(NAMEjoin=tolower(NAME)) %>%
     dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="ctys")) %>%
