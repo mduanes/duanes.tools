@@ -26,9 +26,11 @@ choropleth <- function(data,
                        grad_transform="identity"
                        ) {
   # calc min max and midpoint of col field for gradient
+  if(type == "gradient") {
   minpoint <- ifelse(!is.na(minpoint),midpoint,min(data[[col]]))
   midpoint <- ifelse(!is.na(midpoint),midpoint,mean(data[[col]]))
   maxpoint <- ifelse(!is.na(maxpoint),midpoint,max(data[[col]]))
+  }
   # add label if specified
   if(!is.na(label)) {
   data <- data %>%
