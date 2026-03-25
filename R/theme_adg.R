@@ -7,7 +7,6 @@
 theme_adg <- function() {
 
   ggplot2::theme_bw() +
-  ggplot2::labs(title=title,x=x_lab,y=y_lab,caption=caption) +
   ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size),
                  axis.title = ggplot2::element_text(size=axis_text_size,face = "bold"),
                  legend.text = ggplot2::element_text(size=axis_text_size*0.5),
