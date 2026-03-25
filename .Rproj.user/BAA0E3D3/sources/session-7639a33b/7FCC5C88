@@ -1,27 +1,27 @@
 {
-    "id": "CF14DD41",
-    "path": "C:/Users/mds64585/OneDrive - University of Georgia/CVIOG/duanes.tools/R/choropleth.R",
-    "project_path": "R/choropleth.R",
+    "id": "7FCC5C88",
+    "path": "C:/Users/mds64585/OneDrive - University of Georgia/CVIOG/duanes.tools/R/theme_adg.R",
+    "project_path": "R/theme_adg.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1773849610360.0,
+    "created": 1774463383643.0,
     "source_on_save": false,
-    "relative_order": 12,
+    "relative_order": 13,
     "properties": {
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "32,3",
-        "scrollLine": "12"
+        "cursorPosition": "25,0",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1774277284,
+    "lastKnownWriteTime": 1774463415,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1774277284851,
+    "last_content_update": 1774463415211,
     "read_only": false,
     "read_only_alternatives": []
 }
