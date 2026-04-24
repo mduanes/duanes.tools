@@ -5,7 +5,7 @@
 
 pal_gen <- function(base_color=uga_colors(4), # base color
                     n_col=5, # number of colors
-                    base_high=TRUE) {
+                    base_high=FALSE) {
 
   if(base_high == TRUE) {
   # generate palette using colorspace
@@ -16,10 +16,10 @@ pal_gen <- function(base_color=uga_colors(4), # base color
                              rev=TRUE)[-n_col],
     base_color)
   } else {
-    c(base_color,colorspace::sequential_hcl(n_col,
+    c(colorspace::sequential_hcl(n_col,
                                  h = as(colorspace::hex2RGB(base_color), "polarLUV")@coords[3],
                                  #c = as(hex2RGB(base_color), "polarLUV")@coords[2],
                                  #l = as(hex2RGB(base_color), "polarLUV")@coords[1],
-                                 rev=TRUE)[-n_col])
+                                 rev=TRUE))
   }
 }
