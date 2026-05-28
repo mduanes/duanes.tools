@@ -5,7 +5,7 @@
 
 # pull OPB projections for given years
 
-pull_projections <- function(vintage=2025, # vintage to pull
+pull_projections <- function(vintage=2026, # vintage to pull
                       adg_path=Sys.getenv("ADG_KEY"), # adg path
                       years=seq(year(Sys.Date()),2060,1), # years to pull data for
                       age=FALSE, # break down by age?
@@ -16,16 +16,18 @@ pull_projections <- function(vintage=2025, # vintage to pull
   # pull adg path for user
   if(Sys.getenv("ADG_KEY") == "") {
     print("No ADG Path! Set using install_adg_key()")
-  } else if (as.character(vintage) %in% c("2023","2024","2025")) {
+  } else if (as.character(vintage) %in% c("2023","2024","2025","2026")) {
 
     # register vintage specific paths
-    refs <-c("2025"="2025/series2025_projections.txt",
-             "2024"="2024/series2024_projections.txt",
-             "2023"="2023/2023projections_all.txt")
+    refs <-c("2026"="2026",
+             "2025"="2025",
+             "2025"="2025",
+             "2024"="2024",
+             "2023"="2023")
     # fetch based on vintage
     ref <- unname(refs[as.character(vintage)])
     # compile full path
-    full_path <- paste0(adg_path,"Projects/Active Projects/Georgia Population Projections/Historical Projections/data/",ref)
+    full_path <- paste0(adg_path,"Projects/Active Projects/Georgia Population Projections/Historical Projections/historical projections/",ref)
 
     # get breakdown characteristics based on selections
     chars <- c("COUNTY","YEAR")
@@ -70,7 +72,7 @@ pull_projections <- function(vintage=2025, # vintage to pull
         dplyr::mutate("VINTAGE"=vintage)
     }
   } else {
-    print("Invalid vintage! Supported vintages: 2023, 2024, 2025")
+    message("Invalid vintage! Supported vintages: 2023, 2024, 2025, 2026")
   }
 }
 
