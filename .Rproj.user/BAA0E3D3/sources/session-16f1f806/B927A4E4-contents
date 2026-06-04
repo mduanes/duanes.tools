@@ -41,27 +41,27 @@ pull_projections <- function(vintage=2026, # vintage to pull
       chars <- c(chars,"AGE")
     }
 
-    # handle vintages based on different naming schemes,
-    # group by and summarize for desired breakdown characteristics
-    if (as.character(vintage) == "2025") {
-      readr::read_delim(full_path) %>%
-        dplyr::filter(BOUND=="POP_M") %>%
-        dplyr::group_by(pick(chars)) %>%
-        dplyr::summarize(POP=sum(TOTAL_POP)) %>%
-        dplyr::ungroup() %>%
-        # filter for only wanted years
-        dplyr::filter(YEAR %in% years) %>%
-        dplyr::mutate("VINTAGE"=vintage)
-    } else if (as.character(vintage) == "2023") {
-      readr::read_delim(full_path) %>%
-        dplyr::filter(BOUNDS=="Mean") %>%
-        dplyr::group_by(pick(chars)) %>%
-        dplyr::summarize(POP=sum(POP)) %>%
-        dplyr:: ungroup() %>%
-        # filter for only wanted years
-        dplyr::filter(YEAR %in% years) %>%
-        dplyr::mutate("VINTAGE"=vintage)
-    } else {
+    # # handle vintages based on different naming schemes,
+    # # group by and summarize for desired breakdown characteristics
+    # if (as.character(vintage) == "2025") {
+    #   readr::read_delim(full_path) %>%
+    #     dplyr::filter(BOUND=="POP_M") %>%
+    #     dplyr::group_by(pick(chars)) %>%
+    #     dplyr::summarize(POP=sum(TOTAL_POP)) %>%
+    #     dplyr::ungroup() %>%
+    #     # filter for only wanted years
+    #     dplyr::filter(YEAR %in% years) %>%
+    #     dplyr::mutate("VINTAGE"=vintage)
+    # } else if (as.character(vintage) == "2023") {
+    #   readr::read_delim(full_path) %>%
+    #     dplyr::filter(BOUNDS=="Mean") %>%
+    #     dplyr::group_by(pick(chars)) %>%
+    #     dplyr::summarize(POP=sum(POP)) %>%
+    #     dplyr:: ungroup() %>%
+    #     # filter for only wanted years
+    #     dplyr::filter(YEAR %in% years) %>%
+    #     dplyr::mutate("VINTAGE"=vintage)
+    # } else {
     # read in base data and summarize by preferences
       readr::read_delim(full_path) %>%
         dplyr::group_by(pick(chars)) %>%
@@ -70,7 +70,7 @@ pull_projections <- function(vintage=2026, # vintage to pull
       # filter for only wanted years
         dplyr::filter(YEAR %in% years) %>%
         dplyr::mutate("VINTAGE"=vintage)
-    }
+    #}
   } else {
     message("Invalid vintage! Supported vintages: 2023, 2024, 2025, 2026")
   }
