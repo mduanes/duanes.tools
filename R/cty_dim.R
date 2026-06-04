@@ -18,7 +18,8 @@ cty_dim <- function(adg_path=Sys.getenv("ADG_KEY") # ADG Key/Path
     full_path <- paste0(adg_path,"Data/Dimensions (GitHub)/county_geography_info/county_dimensions_adg.csv")
 
     # read and return dimensions
-    readr::read_csv(full_path)
+    readr::read_csv(full_path) %>%
+      dplyr::rename("CountyFips"="CountyFipsLong")
     }
 }
 
