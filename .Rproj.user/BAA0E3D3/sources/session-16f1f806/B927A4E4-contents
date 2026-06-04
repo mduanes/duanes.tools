@@ -64,7 +64,7 @@ pull_projections <- function(vintage=2026, # vintage to pull
     # } else {
     # read in base data and summarize by preferences
       readr::read_delim(full_path) %>%
-        dplyr::group_by(pick(chars)) %>%
+        dplyr::group_by(dplyr::pick(chars)) %>%
         dplyr:: summarize(POP=sum(POP)) %>%
         dplyr::ungroup() %>%
       # filter for only wanted years
