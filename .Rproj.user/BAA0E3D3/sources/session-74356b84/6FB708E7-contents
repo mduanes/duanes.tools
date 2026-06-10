@@ -37,8 +37,7 @@ get_parcels <- function(
     if(geom == TRUE) {
       print("Adding geometries...")
       return_map <-  dplyr::left_join(return_map,sf::st_read(paste0(adg_path,"/Data/Parcel Data/output/standard_file/county spatial/",.x,".geojson")),
-                                  relationship = "many-to-many") %>%
-        select(parcel_no,CTY,geometry)
+                                  relationship = "many-to-many")
       return_map <-  sf::st_as_sf(return_map)
     }
 
