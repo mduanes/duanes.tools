@@ -16,27 +16,40 @@ get_fips_mutate <- function(data,col="COUNTY" # Georgia counties do not need sta
 
   # get states from provided counties
   states <- data.frame(ctys) %>%
-    mutate(ctys=as.character(ctys))
-
+    mutate(ctys=as.character(ctys),
+           NAMEjoin=tolower(ctys))
   #print(states)
 
   states <- states %>%
     dplyr::mutate(state=ifelse(!stringr::str_detect(ctys,","),"GA",stringr::str_trunc(ctys,2,"left","")),
                   ctys=stringr::str_remove(ctys,",.*")) %>%
     dplyr::left_join(state_fips,by=c("state"="STUSPS")) %>%
-    dplyr::select(ctys,STATEFP) %>%
-    dplyr::mutate(ctys=tolower(ctys))
+    dplyr::select(ctys,NAMEjoin,STATEFP)
 
   # pull county data
   fips <- foreign::read.dbf(paste0(ADG_KEY,"Data/TIGER files/US_county_2023.dbf")) %>%
     dplyr::filter(STATEFP %in% unique(states$STATEFP)) %>%
     dplyr::select(STATEFP,COUNTYFP,NAME) %>%
     dplyr::mutate(NAMEjoin=tolower(NAME)) %>%
-    dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="ctys")) %>%
+    dplyr::right_join(states,by=c("STATEFP","NAMEjoin"="NAMEjoin")) %>%
     dplyr::mutate("GEOID"=paste0(STATEFP,COUNTYFP)) %>%
-    dplyr::select(NAME,GEOID) %>%
+    dplyr::select(NAMEjoin,GEOID) %>%
     dplyr::distinct()
-  colnames(fips) <- c(col,"GEOID")
-  data %>%
-    dplyr::left_join(fips,relationship = "many-to-many")
+
+  colnames(fips) <- c("NAMEjoin","GEOID")
+
+  rejoin <- data %>%
+    dplyr::select(col) %>%
+    cbind(data %>%
+            dplyr::select(col) %>%
+            dplyr::rename("NAMEjoin"=1) %>%
+            dplyr::mutate(NAMEjoin=tolower(NAMEjoin)))
+
+  export <- data %>%
+    dplyr::left_join(rejoin,relationship = "many-to-many")
+
+  export %>%
+    dplyr::left_join(fips,relationship = "many-to-many",
+                     by=c("NAMEjoin"="NAMEjoin"))%>%
+    dplyr::select(-NAMEjoin)
 }
