@@ -43,6 +43,7 @@ get_fips_mutate <- function(data,col="COUNTY" # Georgia counties do not need sta
     dplyr::distinct() %>%
     cbind(data %>%
             dplyr::select(col) %>%
+            dplyr::distinct() %>%
             dplyr::rename("NAMEjoin"=1) %>%
             dplyr::mutate(NAMEjoin=tolower(NAMEjoin)))
 
