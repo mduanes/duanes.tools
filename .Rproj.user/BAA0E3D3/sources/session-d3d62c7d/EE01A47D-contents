@@ -18,7 +18,10 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
                               time_series=FALSE, # if true, pull past 3 non overlapping acs
                               multi_state=FALSE # set true if pulling data for geographies across state lines
                               ) {
-
+  # add exception for state
+  if(tolower(geography)=="state") {
+    counties <- paste0(state,"000")
+  }
   # multi state method ----
   if(multi_state==TRUE) {
 
@@ -175,5 +178,6 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
   }
 
   # return final output regardless of method
-  output
+  output %>%
+    distinct()
 }
