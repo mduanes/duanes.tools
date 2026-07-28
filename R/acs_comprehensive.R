@@ -14,9 +14,10 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
                                   specify_vars = FALSE, # specify variables instead of pulling a list
                                   specified_vars = NULL, # specific vars to pull
                               y=y_acs, # year of data
+                              places=NA, # if mode is places, use this
                               survey="acs5", # survey to pull from
                               time_series=FALSE, # if true, pull past 3 non overlapping acs
-                              multi_state=FALSE # set true if pulling data for geographies across state lines
+                              multi_state=TRUE # set true if pulling data for geographies across state lines
                               ) {
   # add exception for state
   if(tolower(geography)=="state") {
@@ -64,11 +65,13 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
     for(county in counties) {
     state_fip <- str_trunc(county,2,"right","")
     cty_fip <- str_trunc(county,3,"left","")
+
     # time series
     if(time_series == TRUE) {
       years <- c(y-10,y-5,y)
 
       for(y in years) {
+        if(geography == "county") {
           output_loop <- get_acs(geography = geography,
                                  county = cty_fip,
                                  state = state_fip,
@@ -78,6 +81,18 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
                                  geometry = FALSE) %>%
             left_join(metadata,by="variable",relationship = "many-to-many") %>%
             mutate("SERIES"=paste0(y-4,"-",y))
+          # drop county field if not county geography
+        } else {
+          output_loop <- get_acs(geography = geography,
+                                 state = state_fip,
+                                 variable = vars,
+                                 year = y,
+                                 survey = 'acs5',
+                                 geometry = FALSE) %>%
+            left_join(metadata,by="variable",relationship = "many-to-many") %>%
+            mutate("SERIES"=paste0(y-4,"-",y))
+        }
+
         if (y == years[1]) {
           output_cty <- output_loop
         } else {
@@ -85,8 +100,10 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
             rbind(output_loop)
         }
       }
+
       # non time series (so no loop)
     } else {
+      if(geography == "county") {
         output_cty <- get_acs(geography = geography,
                           county = cty_fip,
                           state = state_fip,
@@ -95,6 +112,16 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
                           survey = survey,
                           geometry = FALSE) %>%
           left_join(metadata,by="variable",relationship = "many-to-many")
+        # drop county field if not county geography
+      } else {
+        output_cty <- get_acs(geography = geography,
+                              state = state_fip,
+                              variable = vars,
+                              year = y,
+                              survey = survey,
+                              geometry = FALSE) %>%
+          left_join(metadata,by="variable",relationship = "many-to-many")
+      }
 
     }
 
