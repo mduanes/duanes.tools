@@ -71,7 +71,7 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
       years <- c(y-10,y-5,y)
 
       for(y in years) {
-        if(geography == "county") {
+        if(geography == "county" | geography == "tract") {
           output_loop <- get_acs(geography = geography,
                                  county = cty_fip,
                                  state = state_fip,
