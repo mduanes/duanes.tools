@@ -103,7 +103,7 @@ acs_comprehensive <- function(geography="county", # geo levels: tracts, counties
 
       # non time series (so no loop)
     } else {
-      if(geography == "county") {
+      if(geography == "county" | geography == "tract") {
         output_cty <- get_acs(geography = geography,
                           county = cty_fip,
                           state = state_fip,
