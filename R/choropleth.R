@@ -25,6 +25,12 @@ choropleth <- function(data,
                        minpoint=NA,
                        grad_transform="identity"
                        ) {
+
+  # DRAW LARGEST TO SMALLEST
+  data <- data %>%
+    dplyr::mutate(size=sf::st_area(geometry)) %>%
+    dplyr::arrange(-size)
+
   # calc min max and midpoint of col field for gradient
   if(type == "gradient") {
   minpoint <- ifelse(!is.na(minpoint),midpoint,min(data[[col]]))
