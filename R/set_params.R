@@ -46,5 +46,22 @@ man_override = TRUE
   default_font <<- default_font
 
   dt_params_manual_override <<- man_override
-  devtools::load_all()
+
+  # update relevant functions
+  formals(graph)$label_color <<- default_label_color
+  formals(graph)$base_font <<- default_font
+  formals(graph)$pal <<- default_pal_discrete
+  formals(graph)$graph_linewidth <<- as.numeric(default_graph_linewidth)
+  formals(graph)$line_width <<-  as.numeric(default_line_width)
+  formals(graph)$point_size <<-  as.numeric(default_point_size)
+  formals(graph)$label_color <<- default_label_color
+  formals(graph)$legend_text_size <<-  as.numeric(default_legend_text_size)
+  formals(graph)$label_size <<-  as.numeric(default_label_text_size)
+  formals(graph)$axis_text_size <<- as.numeric(default_axis_text_size)
+
+  formals(choropleth)$pal <<- default_pal_discrete
+  formals(choropleth)$label_size <<- as.numeric(default_label_text_size) -3.3
+  formals(choropleth)$legend_text_size <<- as.numeric(default_legend_text_size)
+  formals(choropleth)$line_width <<- as.numeric(default_graph_linewidth)
+  formals(choropleth)$axis_text_size <<- as.numeric(default_axis_text_size)
 }
