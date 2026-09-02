@@ -1,6 +1,10 @@
 #' @name load_dependencies
 #' @export
 
+library(showtext)
+
+font_add_google("Oswald", "oswald")
+
 # setup environemnt
 .dt_settings <- new.env(parent = emptyenv())
 
