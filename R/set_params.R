@@ -52,7 +52,7 @@ man_override = TRUE
 
 
   for(obj in ls(all.names = TRUE,.dt_settings)) {
-    lockkBinding(obj,
+    lockBinding(obj,
                   .dt_settings)
   }
 
