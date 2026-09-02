@@ -26,14 +26,12 @@ default_font = "sans",
 man_override = TRUE
 ) {
 #
-#   for(obj in ls(all.names = TRUE,.dt_settings)) {
-#     print(obj)
-#     unlockBinding(obj,
-#                   .dt_settings)
-#   }
-
-  # reinstantiate .dt_settings
-  .dt_settings <<- new.env(parent = emptyenv())
+  print(ls(all.names = TRUE,.dt_settings))
+  for(obj in ls(all.names = TRUE,.dt_settings)) {
+    print(obj)
+    unlockBinding(obj,
+                  .dt_settings)
+  }
 
   .dt_settings$default_pal_continuous <<- default_pal_continuous # color palette for continuous data
 
