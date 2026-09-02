@@ -46,8 +46,5 @@ man_override = TRUE
   default_font <<- default_font
 
   dt_params_manual_override <<- man_override
-
-  # refresh
-  source("R/graph.R")
-  source("R/choropleth.R")
+  devtools::load_all()
 }
