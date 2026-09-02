@@ -54,6 +54,7 @@ man_override = TRUE
   for(obj in ls(all.names = TRUE,.dt_settings)) {
     lockBinding(obj,
                   .dt_settings)
+
   }
 
   # update relevant functions
