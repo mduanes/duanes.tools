@@ -10,13 +10,17 @@
 
 
 # get base settings
-source("R/settings.R")
+if(!exists("dt_params_manual_override")) {
+  set_params()
+}
+
 
 graph <- function(data,
                   x, # x field
                   y, # y field
                   x_lab = NULL, # x axis label
                   y_lab = NULL, # y axis label
+                  base_font=default_font, # base font
                   disable_y = FALSE, # turn off y axis ticks entirely
                   commas_x = FALSE, # format x axis with commas
                   commas_y = FALSE, # format y axis with commas
@@ -40,7 +44,6 @@ graph <- function(data,
                   caption = "", # caption if desired
                   axis_text_size=default_axis_text_size # base size of non-label text
                   ) {
-
 
   # set group aesthetic and x/y labels to defaults if not specified in function call
   if(is.null(groups)) {
@@ -68,10 +71,14 @@ graph <- function(data,
     ggplot2::scale_fill_manual(values=pal,name=legend_lab,drop=FALSE) +
     ggplot2::theme_bw() +
     ggplot2::labs(title=title,x=x_lab,y=y_lab,caption=caption) +
-    ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size),
-          axis.title = ggplot2::element_text(size=axis_text_size,face = "bold"),
-          legend.text = ggplot2::element_text(size=axis_text_size*0.5),
-          legend.title = ggplot2::element_text(size=axis_text_size,face="bold"),
+    ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size,
+                                                     family=base_font),
+          axis.title = ggplot2::element_text(size=axis_text_size,face = "bold",
+                                             family=base_font),
+          legend.text = ggplot2::element_text(size=axis_text_size*0.5,
+                                              family=base_font),
+          legend.title = ggplot2::element_text(size=axis_text_size,face="bold",
+                                               family=base_font),
           legend.position = legend_pos,
           panel.grid = ggplot2::element_line(linewidth=graph_linewidth/2),
           panel.grid.minor = ggplot2::element_blank(),
@@ -79,8 +86,10 @@ graph <- function(data,
           legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
           axis.ticks.x = ggplot2::element_blank(),
           plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
-                                      hjust=0.5),
-          strip.text = ggplot2::element_text(size=axis_text_size,face="bold"),
+                                      hjust=0.5,
+                                      family=base_font),
+          strip.text = ggplot2::element_text(size=axis_text_size,face="bold",
+                                             family=base_font),
           strip.background = ggplot2::element_blank())
 
   # put legend on bottom if specified and add n rows
@@ -96,7 +105,8 @@ graph <- function(data,
       #geom_point(size=point_size) +
       ggplot2::theme(panel.grid.major.x = ggplot2::element_blank(),
             panel.grid.minor.x = ggplot2::element_blank(),
-            axis.text = ggplot2::element_text(face="bold"))
+            axis.text = ggplot2::element_text(face="bold",
+                                              family=base_font))
   }
   # bar chart
   if(tolower(graph_type)=="bar") {
@@ -107,7 +117,8 @@ graph <- function(data,
             panel.grid.minor.x = ggplot2::element_blank(),
             panel.grid.major.y = ggplot2::element_blank(),
             panel.grid.minor.y = ggplot2::element_blank(),
-            axis.text = ggplot2::element_text(face="bold"))
+            axis.text = ggplot2::element_text(face="bold",
+                                              family=base_font))
   }
   # column chart, dodge position
   if(tolower(graph_type)=="col" & pos == "dodge") {
@@ -118,7 +129,8 @@ graph <- function(data,
             panel.grid.minor.y = ggplot2::element_blank(),
             panel.grid.major.x = ggplot2::element_blank(),
             panel.grid.minor.x = ggplot2::element_blank(),
-            axis.text = ggplot2::element_text(face="bold"))
+            axis.text = ggplot2::element_text(face="bold",
+                                              family=base_font))
   }
   # column chart, not dodge position
   if(tolower(graph_type)=="col" & pos != "dodge") {
@@ -129,7 +141,8 @@ graph <- function(data,
             panel.grid.minor.y = ggplot2::element_blank(),
             panel.grid.major.x = ggplot2::element_blank(),
             panel.grid.minor.x = ggplot2::element_blank(),
-            axis.text = ggplot2::element_text(face="bold"))
+            axis.text = ggplot2::element_text(face="bold",
+                                              family=base_font))
 
   }
   # remove legend if specified
@@ -144,7 +157,9 @@ graph <- function(data,
       ggplot2::geom_text(mapping=ggplot2::aes(label=format(.data[[label]],digits=2)),
                 fontface="bold",color=label_color,
                 position=ggplot2::position_stack(vjust=0.5),
-                size=label_size)
+                size=label_size,
+                family=base_font
+      )
   }
 
   # add axis comma/pct formatting as specified
