@@ -36,5 +36,7 @@ packages(readxl)
 #packages(officer)
 packages(data.table)
 
+
+.dt_settings <- new.env(parent = emptyenv())
 set_params()
 }

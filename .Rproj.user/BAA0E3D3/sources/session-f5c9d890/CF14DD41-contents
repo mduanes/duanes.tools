@@ -5,7 +5,7 @@
 # returns a choropleth map of a single variable
 choropleth <- function(data,
                        col, # column to use as color
-                       pal=default_pal_discrete, # palette
+                       pal=.dt_settings$default_pal_discrete, # palette
                        show_legend=FALSE, # show legend or not
                        title = NULL, # title of graph
                        legend_lab = "Legend", # label of legend
@@ -13,10 +13,10 @@ choropleth <- function(data,
                        type="discrete", # types: discrete, gradient
                        caption=NULL, # caption if specified
                        label=NA, # field to use to label geometries
-                       label_size=default_label_text_size-3.3, # size of label
-                       axis_text_size=default_axis_text_size, # base size of non-label text
-                       legend_text_size = default_legend_text_size,
-                       line_width=default_graph_linewidth, # width of lines
+                       label_size=.dt_settings$default_label_text_size-3.3, # size of label
+                       axis_text_size=.dt_settings$default_axis_text_size, # base size of non-label text
+                       legend_text_size = .dt_settings$default_legend_text_size,
+                       line_width=.dt_settings$default_graph_linewidth, # width of lines
                        midpoint=NA,
                        maxpoint=NA,
                        minpoint=NA,
