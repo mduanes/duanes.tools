@@ -40,6 +40,7 @@ graph <- function(data,
                   axis_text_size=default_axis_text_size # base size of non-label text
                   ) {
 
+  update_geom_defaults("text", list(family = default_font, size = 5))
   # set group aesthetic and x/y labels to defaults if not specified in function call
   if(is.null(groups)) {
     data <- data %>%
