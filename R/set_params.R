@@ -25,11 +25,15 @@ default_legend_position = c("right","top"), # sets the default legend position f
 default_font = "sans",
 man_override = TRUE
 ) {
+#
+#   for(obj in ls(all.names = TRUE,.dt_settings)) {
+#     print(obj)
+#     unlockBinding(obj,
+#                   .dt_settings)
+#   }
 
-  for(obj in ls(all.names = TRUE,.dt_settings)) {
-    unlockBinding(obj,
-                  .dt_settings)
-  }
+  # reinstantiate .dt_settings
+  .dt_settings <<- new.env(parent = emptyenv())
 
   .dt_settings$default_pal_continuous <<- default_pal_continuous # color palette for continuous data
 
@@ -50,12 +54,12 @@ man_override = TRUE
   .dt_settings$default_graph_linewidth <<- default_graph_linewidth
   .dt_settings$default_font <<- default_font
 
-
-  for(obj in ls(all.names = TRUE,.dt_settings)) {
-    lockBinding(obj,
-                  .dt_settings)
-
-  }
+#
+#   for(obj in ls(all.names = TRUE,.dt_settings)) {
+#     lockBinding(obj,
+#                   .dt_settings)
+#
+#   }
 
   # update relevant functions
   # formals(graph)$label_color <<- default_label_color

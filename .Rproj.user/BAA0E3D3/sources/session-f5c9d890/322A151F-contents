@@ -43,6 +43,7 @@ graph <- function(data,
   # load defaults
   base_font <- ifelse(base_font=="default",.dt_settings$default_font,base_font)
   pal <- ifelse(pal=="default",.dt_settings$default_pal_discrete,pal)
+  print(pal)
   graph_linewidth <- ifelse(graph_linewidth=="default",.dt_settings$default_graph_linewidth,graph_linewidth)
   line_width <- ifelse(line_width=="default",.dt_settings$default_line_width,line_width)
   point_size <- ifelse(point_size=="default",.dt_settings$default_point_size,point_size)
