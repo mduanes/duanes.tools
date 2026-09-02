@@ -5,7 +5,7 @@
 .dt_settings <- new.env(parent = emptyenv())
 
 
-.dt_settings$default_pal_continuous <- default_pal_continuous = RColorBrewer::brewer.pal(8,"Greens") # color palette for continuous data
+.dt_settings$default_pal_continuous <- RColorBrewer::brewer.pal(8,"Greens") # color palette for continuous data
 
 .dt_settings$default_pal_1way <- c("#C8D8EB","#84B3C7", "#35889D","#196A7D","#004E60")
 .dt_settings$pal_binary <- c("#D6D2C4","#C8D8EB") # palette for binary data
