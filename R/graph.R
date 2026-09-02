@@ -9,12 +9,6 @@
 # options for graph are line, chart, and bar'
 
 
-# get base settings
-if(!exists("dt_params_manual_override")) {
-  set_params()
-}
-
-
 graph <- function(data,
                   x, # x field
                   y, # y field

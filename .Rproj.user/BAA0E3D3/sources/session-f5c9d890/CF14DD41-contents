@@ -1,10 +1,6 @@
 #' @name choropleth
 #' @export
 
-# get base settings
-if(!exists("dt_params_manual_override")) {
-  set_params()
-}
 # creates choropleth maps quickly
 # returns a choropleth map of a single variable
 choropleth <- function(data,
