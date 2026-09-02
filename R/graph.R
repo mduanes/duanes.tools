@@ -14,7 +14,7 @@ graph <- function(data,
                   y, # y field
                   x_lab = NULL, # x axis label
                   y_lab = NULL, # y axis label
-                  base_font=.dt_settings$default_font, # base font
+                  base_font="default", # base font
                   disable_y = FALSE, # turn off y axis ticks entirely
                   commas_x = FALSE, # format x axis with commas
                   commas_y = FALSE, # format y axis with commas
@@ -23,22 +23,33 @@ graph <- function(data,
                   graph_type = "line", # graph types: line, col, bar
                   groups=NULL, # group var, also controls fill for col and bar as well as color for line
                   label = NULL, # label field for observations
-                  pal=.dt_settings$default_pal_discrete, # color palette
+                  pal="default", # color palette
                   show_legend=FALSE, # show legend or not
                   legend_lab = "Legend", # legend label
                   legend_pos = "right", # legend position
                   title = "", # graph title
                   pos=FALSE, # position field for col/bar (options: "dodge")
-                  graph_linewidth = .dt_settings$default_graph_linewidth, # width of lines in graph elements (e.g. axis ticks/lines)
+                  graph_linewidth = "default", # width of lines in graph elements (e.g. axis ticks/lines)
                   legend_rows = 2, # rows in legend
-                  line_width = .dt_settings$default_line_width, # line width for lines in graph (e.g. line graph)
-                  point_size=.dt_settings$default_point_size, # size of points
-                  label_color=.dt_settings$default_label_color, # color of labels
-                  legend_text_size=.dt_settings$default_legend_text_size,
-                  label_size=.dt_settings$default_label_text_size, # size of label text
+                  line_width = "default",  # line width for lines in graph (e.g. line graph)
+                  point_size="default",  # size of points
+                  label_color="default",  # color of labels
+                  legend_text_size="default",
+                  label_size="default",  # size of label text
                   caption = "", # caption if desired
-                  axis_text_size=.dt_settings$default_axis_text_size # base size of non-label text
+                  axis_text_size="default",  # base size of non-label text
                   ) {
+
+  # load defaults
+  base_font <- ifelse(base_font=="default",.dt_settings$default_font,base_font)
+  pal <- ifelse(pal=="default",.dt_settings$default_pal_discrete,pal)
+  graph_linewidth <- ifelse(graph_linewidth=="default",.dt_settings$default_graph_linewidth,graph_linewidth)
+  line_width <- ifelse(line_width=="default",.dt_settings$default_line_width,line_width)
+  point_size <- ifelse(point_size=="default",.dt_settings$default_point_size,point_size)
+  label_color <- ifelse(label_color=="default",.dt_settings$default_label_color,label_color)
+  legend_text_size <- ifelse(legend_text_size=="default",.dt_settings$default_legend_text_size,legend_text_size)
+  label_size <- ifelse(label_size=="default",.dt_settings$default_label_text_size,label_size)
+  axis_text_size <- ifelse(axis_text_size=="default",.dt_settings$default_axis_text_size,axis_text_size)
 
   update_geom_defaults("text", list(family = default_font, size = 5))
   # set group aesthetic and x/y labels to defaults if not specified in function call
