@@ -34,7 +34,8 @@ graph <- function(data,
                   line_width = default_line_width, # line width for lines in graph (e.g. line graph)
                   point_size=default_point_size, # size of points
                   label_color=default_label_color, # color of labels
-                  label_size=default_axis_text_size/3, # size of label text
+                  legend_text_size=default_legend_text_size,
+                  label_size=default_label_text_size, # size of label text
                   caption = "", # caption if desired
                   axis_text_size=default_axis_text_size # base size of non-label text
                   ) {
@@ -69,9 +70,9 @@ graph <- function(data,
                                                      family=base_font),
           axis.title = ggplot2::element_text(size=axis_text_size,face = "bold",
                                              family=base_font),
-          legend.text = ggplot2::element_text(size=axis_text_size*0.5,
+          legend.text = ggplot2::element_text(size=legend_text_size*0.5,
                                               family=base_font),
-          legend.title = ggplot2::element_text(size=axis_text_size,face="bold",
+          legend.title = ggplot2::element_text(size=legend_text_size,face="bold",
                                                family=base_font),
           legend.position = legend_pos,
           panel.grid = ggplot2::element_line(linewidth=graph_linewidth/2),

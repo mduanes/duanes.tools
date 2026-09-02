@@ -17,6 +17,8 @@ default_point_size = 4, # sets the default size of the points
 # default text label color for plots
 default_label_color = "black", # sets the color of any text labels in graphs
 default_axis_text_size = 25,
+default_label_text_size = 25/3,
+default_legend_text_size = 25,
 default_graph_linewidth = 1.5,
 # legend position for maps
 default_legend_position = c("right","top"), # sets the default legend position for choropleth maps
@@ -38,6 +40,8 @@ man_override = TRUE
   # default text label color for plots
   default_label_color <<- default_label_color# sets the color of any text labels in graphs
   default_axis_text_size <<- default_axis_text_size
+  default_label_text_size <<- default_label_text_size
+  default_legend_text_size <<- default_legend_text_size
   default_graph_linewidth <<- default_graph_linewidth
   default_font <<- default_font
 

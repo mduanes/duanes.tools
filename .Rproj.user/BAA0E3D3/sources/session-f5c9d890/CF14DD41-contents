@@ -13,8 +13,9 @@ choropleth <- function(data,
                        type="discrete", # types: discrete, gradient
                        caption=NULL, # caption if specified
                        label=NA, # field to use to label geometries
-                       label_size=5, # size of label
+                       label_size=default_label_text_size-3.3, # size of label
                        axis_text_size=default_axis_text_size, # base size of non-label text
+                       legend_text_size = default_legend_text_size,
                        line_width=default_graph_linewidth, # width of lines
                        midpoint=NA,
                        maxpoint=NA,
@@ -50,8 +51,8 @@ choropleth <- function(data,
       ggplot2::theme(axis.text = ggplot2::element_blank(),
             legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
             panel.grid = ggplot2::element_blank(),
-            legend.text = ggplot2::element_text(size=axis_text_size*0.5),
-            legend.title = ggplot2::element_text(size=axis_text_size,face="bold"),
+            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5),
+            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold"),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
                                         hjust=0.5),
             strip.text = ggplot2::element_text(size=axis_text_size,face="bold"),
@@ -79,8 +80,8 @@ choropleth <- function(data,
       ggplot2::theme(axis.text = ggplot2::element_blank(),
             panel.grid = ggplot2::element_blank(),
             legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
-            legend.text = ggplot2::element_text(size=axis_text_size*0.5),
-            legend.title = ggplot2::element_text(size=axis_text_size,face="bold"),
+            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5),
+            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold"),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
                                         hjust=0.5),
             strip.text = ggplot2::element_text(size=axis_text_size,face="bold"),
