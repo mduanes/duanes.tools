@@ -37,7 +37,7 @@ graph <- function(data,
                   legend_text_size="default",
                   label_size="default",  # size of label text
                   caption = "", # caption if desired
-                  axis_text_size="default",  # base size of non-label text
+                  axis_text_size="default"  # base size of non-label text
                   ) {
 
   # load defaults
