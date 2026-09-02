@@ -42,8 +42,7 @@ graph <- function(data,
 
   # load defaults
   base_font <- ifelse(base_font=="default",.dt_settings$default_font,base_font)
-  pal <- ifelse(pal=="default",.dt_settings$default_pal_discrete,pal)
-  print(pal)
+  if(pal=="default") {pal <- dt_params("default_pal_discrete")}
   graph_linewidth <- ifelse(graph_linewidth=="default",.dt_settings$default_graph_linewidth,graph_linewidth)
   line_width <- ifelse(line_width=="default",.dt_settings$default_line_width,line_width)
   point_size <- ifelse(point_size=="default",.dt_settings$default_point_size,point_size)
@@ -52,7 +51,7 @@ graph <- function(data,
   label_size <- ifelse(label_size=="default",.dt_settings$default_label_text_size,label_size)
   axis_text_size <- ifelse(axis_text_size=="default",.dt_settings$default_axis_text_size,axis_text_size)
 
-  update_geom_defaults("text", list(family = default_font, size = 5))
+  update_geom_defaults("text", list(family = base_font, size = 5))
   # set group aesthetic and x/y labels to defaults if not specified in function call
   if(is.null(groups)) {
     data <- data %>%
