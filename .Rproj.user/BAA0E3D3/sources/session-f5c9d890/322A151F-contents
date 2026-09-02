@@ -41,16 +41,15 @@ graph <- function(data,
                   ) {
 
   # load defaults
-  base_font <- ifelse(base_font=="default",.dt_settings$default_font,base_font)
-  print(base_font)
+  base_font <- ifelse(base_font=="default",dt_params("default_font"),base_font)
   if(("default" %in% pal)) {pal <- dt_params("default_pal_discrete")}
-  graph_linewidth <- ifelse(graph_linewidth=="default",.dt_settings$default_graph_linewidth,graph_linewidth)
-  line_width <- ifelse(line_width=="default",.dt_settings$default_line_width,line_width)
-  point_size <- ifelse(point_size=="default",.dt_settings$default_point_size,point_size)
-  label_color <- ifelse(label_color=="default",.dt_settings$default_label_color,label_color)
-  legend_text_size <- ifelse(legend_text_size=="default",.dt_settings$default_legend_text_size,legend_text_size)
-  label_size <- ifelse(label_size=="default",.dt_settings$default_label_text_size,label_size)
-  axis_text_size <- ifelse(axis_text_size=="default",.dt_settings$default_axis_text_size,axis_text_size)
+  graph_linewidth <- ifelse(graph_linewidth=="default",dt_params("default_graph_linewidth"),graph_linewidth)
+  line_width <- ifelse(line_width=="default",dt_params("default_line_width"),line_width)
+  point_size <- ifelse(point_size=="default",dt_params("default_point_size"),point_size)
+  label_color <- ifelse(label_color=="default",dt_params("default_label_color"),label_color)
+  legend_text_size <- ifelse(legend_text_size=="default",dt_params("default_legend_text_size"),legend_text_size)
+  label_size <- ifelse(label_size=="default",dt_params("default_label_text_size"),label_size)
+  axis_text_size <- ifelse(axis_text_size=="default",dt_params("default_axis_text_size"),axis_text_size)
 
   #update_geom_defaults("text", list(family = base_font, size = 5))
   # set group aesthetic and x/y labels to defaults if not specified in function call
