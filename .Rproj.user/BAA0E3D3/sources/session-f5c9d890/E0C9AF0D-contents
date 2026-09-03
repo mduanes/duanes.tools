@@ -33,7 +33,7 @@ showtext_auto(enable = TRUE)
 
 # loads all the libraries you'll ever need...
 
-load_dependencies <- function() {
+#load_dependencies <- function() {
 ## Load or install packages
 packages <- function(x) {
   x <- deparse(substitute(x))
@@ -66,6 +66,4 @@ packages(readxl)
 #packages(officer)
 packages(data.table)
 
-
-set_params()
-}
+#}
