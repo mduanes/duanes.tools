@@ -5,7 +5,7 @@
 # returns a choropleth map of a single variable
 choropleth <- function(data,
                        col, # column to use as color
-                       pal=.dt_settings$default_pal_discrete, # palette
+                       pal="default", # palette
                        show_legend=FALSE, # show legend or not
                        title = NULL, # title of graph
                        legend_lab = "Legend", # label of legend
@@ -13,15 +13,27 @@ choropleth <- function(data,
                        type="discrete", # types: discrete, gradient
                        caption=NULL, # caption if specified
                        label=NA, # field to use to label geometries
-                       label_size=.dt_settings$default_label_text_size-3.3, # size of label
-                       axis_text_size=.dt_settings$default_axis_text_size, # base size of non-label text
-                       legend_text_size = .dt_settings$default_legend_text_size,
-                       line_width=.dt_settings$default_graph_linewidth, # width of lines
+                       label_size="default", # size of label
+                       axis_text_size="default", # base size of non-label text
+                       legend_text_size ="default",
+                       line_width="default", # width of lines
                        midpoint=NA,
                        maxpoint=NA,
                        minpoint=NA,
+                       base_font="default",
                        grad_transform="identity"
                        ) {
+
+  base_font <- ifelse(base_font=="default",dt_params("default_font"),base_font)
+  if(("default" %in% pal)) {pal <- dt_params("default_pal_discrete")}
+  graph_linewidth <- ifelse(graph_linewidth=="default",dt_params("default_graph_linewidth"),graph_linewidth)
+  line_width <- ifelse(line_width=="default",dt_params("default_line_width"),line_width)
+  #point_size <- ifelse(point_size=="default",dt_params("default_point_size"),point_size)
+  #label_color <- ifelse(label_color=="default",dt_params("default_label_color"),label_color)
+  legend_text_size <- ifelse(legend_text_size=="default",dt_params("default_legend_text_size"),legend_text_size)
+  label_size <- ifelse(label_size=="default",dt_params("default_label_text_size"),label_size)
+  axis_text_size <- ifelse(axis_text_size=="default",dt_params("default_axis_text_size"),axis_text_size)
+
 
   # DRAW LARGEST TO SMALLEST
   data <- data %>%
@@ -51,11 +63,15 @@ choropleth <- function(data,
       ggplot2::theme(axis.text = ggplot2::element_blank(),
             legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
             panel.grid = ggplot2::element_blank(),
-            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5),
-            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold"),
+            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5,
+                                                family=base_font),
+            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold",
+                                                 family=base_font),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
-                                        hjust=0.5),
-            strip.text = ggplot2::element_text(size=axis_text_size,face="bold"),
+                                        hjust=0.5,
+                                        family=base_font),
+            strip.text = ggplot2::element_text(size=axis_text_size,face="bold",
+                                               family=base_font),
             strip.background = ggplot2::element_blank()) +
       ggplot2::geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
 
@@ -80,11 +96,15 @@ choropleth <- function(data,
       ggplot2::theme(axis.text = ggplot2::element_blank(),
             panel.grid = ggplot2::element_blank(),
             legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
-            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5),
-            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold"),
+            legend.text = ggplot2::element_text(size=default_legend_text_size*0.5,
+                                                family=base_font),
+            legend.title = ggplot2::element_text(size=default_legend_text_size,face="bold",
+                                                 family=base_font),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
-                                        hjust=0.5),
-            strip.text = ggplot2::element_text(size=axis_text_size,face="bold"),
+                                        hjust=0.5,
+                                        family=base_font),
+            strip.text = ggplot2::element_text(size=axis_text_size,face="bold",
+                                               family=base_font),
             strip.background = ggplot2::element_blank()) +
       ggplot2::geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
 
@@ -114,7 +134,8 @@ choropleth <- function(data,
   # add labels if specified
   if(!is.na(label)) {
     graph <- graph +
-      ggplot2::geom_sf_text(aes(label=graph_lab),size=label_size,fontface="bold") +
+      ggplot2::geom_sf_text(aes(label=graph_lab),size=label_size,fontface="bold",
+                            family=base_font) +
       ggplot2::labs(x="",y="")
   }
   # return output

@@ -80,6 +80,8 @@ graph <- function(data,
     ggplot2::labs(title=title,x=x_lab,y=y_lab,caption=caption) +
     ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size,
                                                      family=base_font),
+                   axis.title.y=element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
+                   axis.title.x=element_text(margin = margin(t = 15, r = 0, b = 0, l = 0)),
           axis.title = ggplot2::element_text(size=axis_text_size,face = "bold",
                                              family=base_font),
           legend.text = ggplot2::element_text(size=legend_text_size*0.5,

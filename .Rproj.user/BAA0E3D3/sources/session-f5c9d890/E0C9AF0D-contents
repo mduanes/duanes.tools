@@ -5,6 +5,8 @@ library(showtext)
 
 font_add_google("Oswald", "oswald")
 
+showtext_auto(enable = TRUE)
+
 # setup environemnt
 .dt_settings <- new.env(parent = emptyenv())
 
