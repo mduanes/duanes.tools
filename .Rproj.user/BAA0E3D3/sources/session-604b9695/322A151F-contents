@@ -41,6 +41,8 @@ graph <- function(data,
                   points = TRUE
                   ) {
 
+
+
   # load defaults
   base_font <- ifelse(base_font=="default",dt_params("default_font"),base_font)
   if(("default" %in% pal)) {pal <- dt_params("default_pal_discrete")}
