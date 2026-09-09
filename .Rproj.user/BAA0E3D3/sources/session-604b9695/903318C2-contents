@@ -9,10 +9,10 @@ dt_fonts <- function(font) {
   if(tolower(font) == "formata") {
 
     sysfonts::font.add("formata",
-             "fonts/formata/FormataCondensed.ttf",
-             "fonts/formata/FormataCondensed_Bold.ttf",
-             "fonts/formata/FormataCondensed_Italic.ttf",
-             "fonts/formata/FormataBold_Italic.ttf")
+                       paste0(get_adg_key(),"Resources/fonts/formata/FormataCondensed.ttf"),
+                       paste0(get_adg_key(),"Resources/fonts/formata/FormataCondensed_Bold.ttf"),
+                       paste0(get_adg_key(),"Resources/fonts/formata/FormataCondensed_Italic.ttf"),
+                       paste0(get_adg_key(),"Resources/fonts/formata/FormataBold_Italic.ttf"))
   } else {
     print("Unrecognized font.")
   }
