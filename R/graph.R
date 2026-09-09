@@ -37,11 +37,13 @@ graph <- function(data,
                   legend_text_size="default",
                   label_size="default",  # size of label text
                   caption = "", # caption if desired
-                  axis_text_size="default"  # base size of non-label text
+                  axis_text_size="default",  # base size of non-label text
+                  points = TRUE
                   ) {
 
   # load defaults
   base_font <- ifelse(base_font=="default",dt_params("default_font"),base_font)
+  print(base_font)
   if(("default" %in% pal)) {pal <- dt_params("default_pal_discrete")}
   graph_linewidth <- ifelse(graph_linewidth=="default",dt_params("default_graph_linewidth"),graph_linewidth)
   line_width <- ifelse(line_width=="default",dt_params("default_line_width"),line_width)
@@ -116,6 +118,11 @@ graph <- function(data,
             panel.grid.minor.x = ggplot2::element_blank(),
             axis.text = ggplot2::element_text(face="bold",
                                               family=base_font))
+
+    if(points == TRUE) {
+      g <- g +
+        ggplot2::geom_point(size=point_size)
+    }
   }
   # bar chart
   if(tolower(graph_type)=="bar") {

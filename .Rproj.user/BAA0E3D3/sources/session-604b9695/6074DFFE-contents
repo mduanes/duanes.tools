@@ -14,6 +14,11 @@ y_acs <- year(Sys.Date()) - 2
 library(showtext)
 
 font_add_google("Oswald", "oswald")
+font_add("formata",
+         "fonts/formata/FormataCondensed.ttf",
+         "fonts/formata/FormataCondensed_Bold.ttf",
+         "fonts/formata/FormataCondensed_Italic.ttf",
+         "fonts/formata/FormataBold_Italic.ttf")
 
 showtext_auto(enable = TRUE)
 
@@ -29,8 +34,8 @@ showtext_auto(enable = TRUE)
                                        "#594A25","#BA0C2F","#000")  # uga color palette
 
 # line/point width defaults for line graph
-.dt_settings$default_line_width <- 2 # sets the default width of the line(s)
-.dt_settings$default_point_size <- 4 # sets the default size of the points
+.dt_settings$default_line_width <- 1.5 # sets the default width of the line(s)
+.dt_settings$default_point_size <- 3 # sets the default size of the points
 
 # default text label color for plots
 .dt_settings$default_label_color <- "black" # sets the color of any text labels in graphs
@@ -38,4 +43,4 @@ showtext_auto(enable = TRUE)
 .dt_settings$default_label_text_size <- 7.5
 .dt_settings$default_legend_text_size <- 25
 .dt_settings$default_graph_linewidth <- 1.5
-.dt_settings$default_font <- "sans"
+.dt_settings$default_font <- "oswald"
