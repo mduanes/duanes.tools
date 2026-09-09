@@ -86,6 +86,7 @@ choropleth <- function(data,
         ggplot2::scale_color_manual(values=pal,name=legend_lab,drop=FALSE)
     }
 
+
     # alt case where we want continuous variables
     } else if(type=="gradient") {
     graph <- ggplot2::ggplot(data,mapping=aes(fill=.data[[col]])) +
