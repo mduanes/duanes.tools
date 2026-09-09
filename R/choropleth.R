@@ -81,7 +81,9 @@ choropleth <- function(data,
         ggplot2::geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
     } else {
       graph <- graph +
-        ggplot2::geom_sf(linewidth=line_width/1.5,mapping=aes(color=.data[[col]]),show.legend = show_legend)
+        ggplot2::geom_sf(linewidth=line_width/1.5,mapping=aes(color=.data[[col]]),show.legend = show_legend) +
+        # add basic aesthetic settings
+        ggplot2::scale_color_manual(values=pal,name=legend_lab,drop=FALSE)
     }
 
     # alt case where we want continuous variables
@@ -122,7 +124,18 @@ choropleth <- function(data,
         ggplot2::geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
     } else {
       graph <- graph +
-        ggplot2::geom_sf(linewidth=line_width/1.5,mapping=aes(color=.data[[col]]),show.legend = show_legend)
+        ggplot2::geom_sf(linewidth=line_width/1.5,mapping=aes(color=.data[[col]]),show.legend = show_legend) +
+        ggplot2::scale_color_gradient2(high=pal[5],
+                                      mid=pal[3],
+                                      low=pal[1],
+                                      name=legend_lab,
+                                      midpoint=midpoint,
+                                      transform=grad_transform,
+                                      labels=scales::comma,
+                                      breaks=c(minpoint,
+                                               0,
+                                               midpoint,
+                                               maxpoint))
     }
 
     # add percent marker to legend if requested
