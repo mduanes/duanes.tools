@@ -7,6 +7,7 @@
 
 dt_fonts <- function(font) {
   if(tolower(font) == "formata") {
+
     sysfonts::font.add("formata",
              "fonts/formata/FormataCondensed.ttf",
              "fonts/formata/FormataCondensed_Bold.ttf",
