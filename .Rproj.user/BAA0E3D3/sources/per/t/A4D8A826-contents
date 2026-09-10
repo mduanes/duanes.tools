@@ -32,11 +32,13 @@ packages(knitr)
 packages(fredr)
 packages(BAMMtools)
 packages(readxl)
-#packages(flextable)
+packages(flextable)
 #packages(officedown)
-#packages(officer)
+packages(officer)
 packages(data.table)
+packages(showtext)
 
+showtext::showtext.auto()
 
 #set_params()
 }
