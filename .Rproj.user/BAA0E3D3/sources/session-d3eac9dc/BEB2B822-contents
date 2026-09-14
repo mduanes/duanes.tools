@@ -29,7 +29,6 @@ theme_adg <- function() {
                                                        family=base_font),
                    legend.title = ggplot2::element_text(size=legend_text_size,face="bold",
                                                         family=base_font),
-                   legend.position = legend_pos,
                    panel.grid = ggplot2::element_line(linewidth=graph_linewidth/2),
                    panel.grid.minor = ggplot2::element_blank(),
                    panel.border = ggplot2::element_blank(),
