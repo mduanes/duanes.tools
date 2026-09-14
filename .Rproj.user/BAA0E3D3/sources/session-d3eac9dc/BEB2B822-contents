@@ -18,6 +18,8 @@ theme_adg <- function() {
   axis_text_size <- dt_params("default_axis_text_size")
 
 
+
+
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size,
                                                      family=base_font),
