@@ -19,7 +19,6 @@ theme_adg <- function() {
 
 
   ggplot2::theme_bw() +
-  ggplot2::labs(title=title,x=x_lab,y=y_lab,caption=caption) +
   ggplot2::theme(axis.text = ggplot2::element_text(size=axis_text_size,
                                                      family=base_font),
                    axis.title.y=element_text(margin = margin(t = 0, r = 15, b = 0, l = 0)),
