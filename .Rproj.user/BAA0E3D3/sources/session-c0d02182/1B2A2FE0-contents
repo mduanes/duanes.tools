@@ -1,0 +1,15 @@
+df <- read_csv("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Projects/Active Projects/Georgia Population Projections/2026/PeachProjections/group_quarters/gqpop_by_age.csv")
+
+df %>%
+  group_by(GEOID,year) %>%
+  summarize(GQpop=sum(GQpop)) %>%
+  filter(year %in% c(2020,2025)) %>%
+  pivot_wider(names_from=year,
+              values_from=GQpop) %>%
+  mutate(ratio=ifelse(`2025`>0 & `2020` > 0,`2025`/`2020`,1))  %>%
+  mutate("GEOID"=as.character(GEOID)) %>%
+  left_join(cty_dim() %>%
+              select(County,CountyFips) %>%
+              rename("GEOID"=CountyFips)) %>%
+  filter(County %in% c("Irwin","Stewart","Bleckley")) %>%
+  write_csv("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Projects/Active Projects/Georgia Population Projections/2026/PeachProjections/group_quarters/gq_rescale.csv")

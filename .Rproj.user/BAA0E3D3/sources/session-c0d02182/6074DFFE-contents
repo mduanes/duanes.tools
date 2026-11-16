@@ -30,9 +30,7 @@ showtext_auto(enable = TRUE)
 .dt_settings$default_pal_1way <- c("#C8D8EB","#84B3C7", "#35889D","#196A7D","#004E60")
 .dt_settings$pal_binary <- c("#D6D2C4","#C8D8EB") # palette for binary data
 
-.dt_settings$default_pal_discrete <- c("#D6D2C4","#9EA2A2","#C8D8EB","#B4BD00","#00A3AD","#554F47","#004E60",
-                                       "#594A25","#BA0C2F","#000")  # uga color palette
-
+.dt_settings$default_pal_discrete <- rev(c("#522b4a","#00acbd","#858919","#696059","#cd163f","#E2DDCB","#000000","#b4bd00","#00667D"))
 # line/point width defaults for line graph
 .dt_settings$default_line_width <- 1.5 # sets the default width of the line(s)
 .dt_settings$default_point_size <- 3 # sets the default size of the points

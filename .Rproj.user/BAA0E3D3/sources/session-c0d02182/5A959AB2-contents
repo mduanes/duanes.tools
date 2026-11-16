@@ -1,0 +1,90 @@
+# find gq deficit in college ctys
+
+nomig <- read_delim("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Projects/Active Projects/Georgia Population Projections/2026/PeachProjections/results/population/raw/ga_proj_population_Migration_00.txt",
+                    delim="\t")
+popbase <- read_csv("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Projects/Active Projects/Georgia Population Projections/Population Base/results/2025/population_base_tidy_2025_MARC_unrounded.csv")
+
+def <- nomig %>%
+  filter(YEAR == c(2026)) %>%
+  select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+         -GROUP_QTRS) %>%
+  filter(AGE %in% c("10-14","20-24")) %>%
+  group_by(COUNTY,AGE) %>%
+  summarize(POP_M=sum(POP_M)) %>%
+  pivot_wider(names_from=AGE,
+              values_from=POP_M) %>%
+  left_join(nomig %>%
+              filter(YEAR == c(2026)) %>%
+              select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+                     -POP_M) %>%
+              filter(AGE %in% "20-24") %>%
+              group_by(COUNTY) %>%
+              summarize(GROUP_QTRS=sum(GROUP_QTRS))) %>%
+  mutate(deficit=`20-24`-`10-14`-GROUP_QTRS) %>%
+  arrange(-deficit) %>%
+  mutate(def_pct_abs=(deficit/`20-24`))  %>%
+  write_csv("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Data/Group Quarters - Census/gq_def_proj.csv")
+
+dorm_pop_cty <- read_csv("C:/Users/mds64585/University of Georgia/CVIOG--WED Division - ADG/Data/Group Quarters - Census/counties_gq_classified0.50.60.70.80.9.csv") %>%
+  filter(variable=="College Dorm") %>%
+  select(GEOID,value) %>%
+  distinct()
+
+def <- def %>%
+  get_fips_mutate() %>%
+  mutate(GEOID=as.numeric(GEOID)) %>%
+  left_join(dorm_pop_cty)
+
+ggplot(def %>%
+         filter(
+                deficit>1000),aes(x=value,
+               y=deficit)) +
+  geom_point() +
+  #scale_x_log10() +
+  #scale_y_log10() +
+  geom_label(aes(label=COUNTY)) +
+  labs(x="College Dorm")
+
+# clarke county total deficit
+nomig %>%
+  filter(YEAR == c(2026)) %>%
+  select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+         -GROUP_QTRS) %>%
+  filter(AGE %in% c("10-14","20-24")) %>%
+  group_by(COUNTY,AGE) %>%
+  summarize(POP_M=sum(POP_M)) %>%
+  pivot_wider(names_from=AGE,
+              values_from=POP_M) %>%
+  left_join(nomig %>%
+              filter(YEAR == c(2026)) %>%
+              select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+                     -POP_M) %>%
+              filter(AGE %in% "20-24") %>%
+              group_by(COUNTY) %>%
+              summarize(GROUP_QTRS=sum(GROUP_QTRS))) %>%
+  mutate(deficit=`20-24`-`10-14`-GROUP_QTRS) %>%
+  arrange(-deficit) %>%
+  filter(COUNTY=="Clarke") %>% select(-`20-24`,-`10-14`) %>% rbind(
+
+nomig %>%
+  filter(YEAR == c(2026)) %>%
+  select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+         -GROUP_QTRS) %>%
+  filter(AGE %in% c("10-14","15-19")) %>%
+  group_by(COUNTY,RACE_ETH,AGE) %>%
+  summarize(POP_M=sum(POP_M)) %>%
+  pivot_wider(names_from=AGE,
+              values_from=POP_M) %>%
+  left_join(nomig %>%
+              filter(YEAR == c(2026)) %>%
+              select(-POP_L,-POP_H,-FLAG,-MIG_MODEL,
+                     -POP_M) %>%
+              filter(AGE %in% "15-19") %>%
+              group_by(COUNTY) %>%
+              summarize(GROUP_QTRS=sum(GROUP_QTRS))) %>%
+  mutate(deficit=`15-19`-`10-14`-GROUP_QTRS) %>%
+  arrange(-deficit) %>%
+  filter(COUNTY=="Clarke")
+
+  )  %>%
+  summarize(deficit = sum(deficit))

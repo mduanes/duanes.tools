@@ -8,7 +8,7 @@ choropleth <- function(data,
                        pal="default", # palette
                        show_legend=FALSE, # show legend or not
                        title = NULL, # title of graph
-                       legend_lab = "Legend", # label of legend
+                       legend_lab = "", # label of legend
                        legend_pct=FALSE, # include % marker on legend or not (gradient only)
                        type="discrete", # types: discrete, gradient
                        caption=NULL, # caption if specified
@@ -21,8 +21,11 @@ choropleth <- function(data,
                        maxpoint=NA,
                        minpoint=NA,
                        base_font="default",
+                       legend_pos="top",
                        grad_transform="identity",
-                       no_borders=FALSE
+                       no_borders=FALSE,
+                       border_col="white",
+                       dyn_col= TRUE
                        ) {
 
   base_font <- ifelse(base_font=="default",dt_params("default_font"),base_font)
@@ -66,22 +69,22 @@ choropleth <- function(data,
             panel.grid = ggplot2::element_blank(),
             legend.text = ggplot2::element_text(size=legend_text_size*0.5,
                                                 family=base_font),
-            legend.title = ggplot2::element_text(size=legend_text_size,face="bold",
+            legend.title = ggplot2::element_text(size=legend_text_size,face="plain",
                                                  family=base_font),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
                                         hjust=0.5,
                                         family=base_font),
-            strip.text = ggplot2::element_text(size=axis_text_size,face="bold",
+            strip.text = ggplot2::element_text(size=axis_text_size,face="plain",
                                                family=base_font),
             strip.background = ggplot2::element_blank())
 
     # borders or not
     if(no_borders==FALSE) {
       graph <- graph +
-        ggplot2::geom_sf(linewidth=line_width/1.5,color="white",show.legend = show_legend)
+        ggplot2::geom_sf(linewidth=line_width/1.5,color=border_col,show.legend = show_legend)
     } else {
       graph <- graph +
-        ggplot2::geom_sf(linewidth=line_width/1.5,mapping=aes(color=.data[[col]]),show.legend = show_legend) +
+        ggplot2::geom_sf(linewidth=line_width/1.5,color="#00000000",show.legend = show_legend) +
         # add basic aesthetic settings
         ggplot2::scale_color_manual(values=pal,name=legend_lab,drop=FALSE)
     }
@@ -110,12 +113,12 @@ choropleth <- function(data,
             legend.background = ggplot2::element_rect(fill = "transparent", color = NA),
             legend.text = ggplot2::element_text(size=legend_text_size*0.5,
                                                 family=base_font),
-            legend.title = ggplot2::element_text(size=legend_text_size,face="bold",
+            legend.title = ggplot2::element_text(size=legend_text_size,face="plain",
                                                  family=base_font),
             plot.caption = ggplot2::element_text(size=0.6*axis_text_size,face="italic",
                                         hjust=0.5,
                                         family=base_font),
-            strip.text = ggplot2::element_text(size=axis_text_size,face="bold",
+            strip.text = ggplot2::element_text(size=axis_text_size,face="plain",
                                                family=base_font),
             strip.background = ggplot2::element_blank())
 
@@ -161,14 +164,38 @@ choropleth <- function(data,
   if(show_legend == FALSE) {
     graph <- graph +
       ggplot2::theme(legend.position = "none")
-  }
-  # add labels if specified
-  if(!is.na(label)) {
+  } else {
     graph <- graph +
-      ggplot2::geom_sf_text(aes(label=graph_lab),size=label_size,fontface="bold",
-                            family=base_font) +
-      ggplot2::labs(x="",y="")
+      ggplot2::theme(legend.position = legend_pos)
+  }
+
+  # assign label colors
+  if(dyn_col == TRUE) {
+    label_colors <- assign_text_col(pal)
+  } else {
+    label_colors <- rep(label_color,length(pal))
+  }
+
+  # add labels if specified
+  if (!is.na(label)) {
+    graph <- graph  +
+      # counties
+      ggplot2::geom_sf_text(
+        aes(label = graph_lab, geometry = geometry,
+            color=.data[[col]]),
+        #stat = "sf_coordinates",
+        fontface="bold",
+        size = 6.5,
+        #vjust=-0.5,
+        #max.overlaps = 3,
+        family=dt_params("default_font")#,
+        #force=0
+      ) +
+      scale_color_manual(values=label_colors)+
+      guides(color = "none")
   }
   # return output
-  graph
+  graph +
+    labs(x="",
+         y="")
 }
